@@ -1,10 +1,10 @@
 ﻿<UserControl x:Class="UAInspector.Views.ServerListView"
- xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
   mc:Ignorable="d" 
-  d:DesignHeight="600" d:DesignWidth="1000">
+       d:DesignHeight="600" d:DesignWidth="1000">
  
  <Grid Background="{StaticResource BackgroundBrush}">
      <Grid.RowDefinitions>
@@ -15,58 +15,80 @@
  <!-- Header -->
 <Border Grid.Row="0" Background="{StaticResource SurfaceBrush}" 
   BorderBrush="{StaticResource BorderBrush}"
-  BorderThickness="0,0,0,1" Padding="24,16">
-            <StackPanel>
-       <TextBlock Text="OPC UA Server Connection" 
-      Style="{StaticResource HeaderText}"/>
- 
- <!-- Connection Status Banner -->
+  BorderThickness="0,0,0,1" Padding="24,20">
+         <Grid>
+          <Grid.ColumnDefinitions>
+  <ColumnDefinition Width="*"/>
+           <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+                
+     <!-- Title Section -->
+        <StackPanel Grid.Column="0">
+  <TextBlock Text="OPC UA Server Connection" 
+ Style="{StaticResource HeaderText}"
+       Margin="0,0,0,4"/>
+   
+   <!-- Connection Status Banner -->
       <Border Background="{StaticResource SuccessBrush}"
-    CornerRadius="4"
-  Padding="12,8"
-  Margin="0,8,0,0">
+    CornerRadius="6"
+    Padding="12,6"
+      Margin="0,8,0,0"
+      MaxWidth="400"
+             HorizontalAlignment="Left">
    <Border.Style>
          <Style TargetType="Border">
    <Setter Property="Visibility" Value="Collapsed"/>
     <Style.Triggers>
-         <DataTrigger Binding="{Binding IsConnected}" Value="True">
+<DataTrigger Binding="{Binding IsConnected}" Value="True">
      <Setter Property="Visibility" Value="Visible"/>
   </DataTrigger>
          </Style.Triggers>
       </Style>
   </Border.Style>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="🔗" FontSize="16" VerticalAlignment="Center" Margin="0,0,8,0"/>
-      <TextBlock VerticalAlignment="Center">
-    <Run Text="Connected to:" FontWeight="SemiBold"/>
-<Run Text="{Binding ConnectedServer.Name, Mode=OneWay}" FontWeight="Bold"/>
+  <StackPanel Orientation="Horizontal">
+         <TextBlock Text="●" FontSize="14" 
+           Foreground="White"
+        VerticalAlignment="Center" 
+          Margin="0,0,8,0"/>
+      <TextBlock VerticalAlignment="Center"
+      Foreground="White"
+   FontSize="13"
+                FontWeight="Medium">
+       <Run Text="Connected to:"/>
+  <Run Text="{Binding ConnectedServer.Name, Mode=OneWay}" FontWeight="Bold"/>
   </TextBlock>
-    </StackPanel>
+       </StackPanel>
  </Border>
     </StackPanel>
+           
+  <!-- Quick Actions -->
+   <StackPanel Grid.Column="1" 
+        Orientation="Horizontal" 
+   VerticalAlignment="Top">
+           <Button Content="🔄 Refresh" 
+         Command="{Binding RefreshCommand}"
+   Style="{StaticResource SecondaryButton}"
+          Padding="16,10"
+       Margin="0,0,8,0"
+           ToolTip="Refresh server list"/>
+             </StackPanel>
+       </Grid>
    </Border>
 
     <!-- Main Content -->
    <Grid Grid.Row="1" Margin="24">
     <Grid.ColumnDefinitions>
-   <ColumnDefinition Width="2*"/>
+   <ColumnDefinition Width="2*" MinWidth="400"/>
       <ColumnDefinition Width="20"/>
-   <ColumnDefinition Width="*"/>
+   <ColumnDefinition Width="1.2*" MinWidth="300"/>
        </Grid.ColumnDefinitions>
 
-     <!-- Left Panel: Recent Servers -->
- <Border Grid.Column="0">
-   <Border.Style>
-    <Style TargetType="Border" BasedOn="{StaticResource Card}">
-  <Style.Triggers>
- <DataTrigger Binding="{Binding IsConnected}" Value="True">
-   <Setter Property="Opacity" Value="0.5"/>
-    </DataTrigger>
-       </Style.Triggers>
-    </Style>
-    </Border.Style>
+     <!-- Left Panel: Saved Servers -->
+ <Border Grid.Column="0" 
+        Style="{StaticResource Card}"
+       Padding="20">
   <Grid>
-     <Grid.RowDefinitions>
+   <Grid.RowDefinitions>
     <RowDefinition Height="Auto"/>
 <RowDefinition Height="Auto"/>
    <RowDefinition Height="*"/>
@@ -74,104 +96,245 @@
     </Grid.RowDefinitions>
 
  <!-- Title -->
-        <TextBlock Grid.Row="0" Text="Recent Servers" 
- Style="{StaticResource SubHeaderText}"/>
+      <StackPanel Grid.Row="0" 
+   Orientation="Horizontal" 
+    Margin="0,0,0,16">
+     <TextBlock Text="🖥️" 
+         FontSize="20" 
+ VerticalAlignment="Center" 
+           Margin="0,0,10,0"/>
+   <TextBlock Text="Saved Servers" 
+      FontSize="18" 
+                 FontWeight="SemiBold"
+          Foreground="{StaticResource TextPrimaryBrush}"
+          VerticalAlignment="Center"/>
+       <Border Background="{StaticResource AccentBrush}"
+       CornerRadius="10"
+        Padding="8,2"
+    Margin="12,0,0,0"
+  VerticalAlignment="Center">
+   <TextBlock Text="{Binding Servers.Count, StringFormat='{}{0}'}" 
+      FontSize="12"
+    FontWeight="Bold"
+                 Foreground="White"/>
+  </Border>
+    </StackPanel>
 
        <!-- Manual Entry -->
-     <Grid Grid.Row="1" Margin="0,0,0,16">
+     <Border Grid.Row="1" 
+  Background="{StaticResource SurfaceBrush}"
+  BorderBrush="{StaticResource BorderBrush}"
+    BorderThickness="1"
+           CornerRadius="8"
+              Padding="16,12"
+  Margin="0,0,0,16">
+    <Grid>
     <Grid.ColumnDefinitions>
-    <ColumnDefinition Width="*"/>
+<ColumnDefinition Width="Auto"/>
+         <ColumnDefinition Width="*"/>
      <ColumnDefinition Width="Auto"/>
-  </Grid.ColumnDefinitions>
+    </Grid.ColumnDefinitions>
    
- <TextBox Grid.Column="0" 
+         <TextBlock Grid.Column="0"
+         Text="🔗" 
+          FontSize="20"
+             VerticalAlignment="Center"
+   Margin="0,0,12,0"/>
+   
+ <TextBox Grid.Column="1" 
        Text="{Binding ManualUrl, UpdateSourceTrigger=PropertyChanged}"
     Style="{StaticResource ModernTextBox}"
-    Margin="0,0,8,0"
+    Margin="0,0,12,0"
+         FontSize="13"
    IsEnabled="{Binding IsConnected, Converter={StaticResource InverseBooleanConverter}}"
-  ToolTip="Enter OPC UA server URL (e.g., opc.tcp://localhost:4840)">
+     ToolTip="Enter OPC UA server URL (e.g., opc.tcp://localhost:4840)">
   <TextBox.InputBindings>
  <KeyBinding Key="Enter" Command="{Binding AddManualCommand}"/>
    </TextBox.InputBindings>
    </TextBox>
   
-   <Button Grid.Column="1" Content="Add Server"
+   <Button Grid.Column="2" 
+      Content="➕ Add"
   Command="{Binding AddManualCommand}"
     Style="{StaticResource ModernButton}"
- Padding="20,8"/>
+            FontSize="13"
+ Padding="20,10"/>
 </Grid>
+   </Border>
 
      <!-- Server List -->
-  <ListBox Grid.Row="2" 
-   ItemsSource="{Binding Servers}"
-      SelectedItem="{Binding SelectedServer}"
-  IsEnabled="{Binding IsConnected, Converter={StaticResource InverseBooleanConverter}}"
- Style="{StaticResource ModernListBox}">
-    <ListBox.ItemContainerStyle>
-  <Style TargetType="ListBoxItem" BasedOn="{StaticResource ModernListBoxItem}">
-  <EventSetter Event="MouseDoubleClick" Handler="ServerListItem_MouseDoubleClick"/>
-     </Style>
-     </ListBox.ItemContainerStyle>
-     <ListBox.ItemTemplate>
-   <DataTemplate>
-     <Grid Margin="8">
-    <Grid.RowDefinitions>
+    <ScrollViewer Grid.Row="2" 
+   VerticalScrollBarVisibility="Auto"
+              HorizontalScrollBarVisibility="Disabled">
+     <ItemsControl ItemsSource="{Binding Servers}">
+        <ItemsControl.ItemTemplate>
+             <DataTemplate>
+  <Border Background="{StaticResource SurfaceBrush}"
+ BorderBrush="{StaticResource BorderBrush}"
+     BorderThickness="1"
+     CornerRadius="8"
+          Margin="0,0,0,12"
+  Padding="16"
+     Cursor="Hand">
+   <Border.Style>
+      <Style TargetType="Border">
+          <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+             <Style.Triggers>
+          <Trigger Property="IsMouseOver" Value="True">
+               <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+     <Setter Property="Background" Value="#2A2A2D"/>
+         </Trigger>
+       </Style.Triggers>
+      </Style>
+   </Border.Style>
+           
+             <Border.InputBindings>
+    <MouseBinding Gesture="LeftClick" 
+      Command="{Binding DataContext.ConnectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+     CommandParameter="{Binding}"/>
+       <MouseBinding Gesture="LeftDoubleClick" 
+             Command="{Binding DataContext.ConnectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+           CommandParameter="{Binding}"/>
+  </Border.InputBindings>
+      
+       <Grid>
+               <Grid.RowDefinitions>
+           <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
   <RowDefinition Height="Auto"/>
-    <RowDefinition Height="Auto"/>
-     <RowDefinition Height="Auto"/>
-       </Grid.RowDefinitions>
-    
-<TextBlock Grid.Row="0" Text="{Binding Name}" 
-     FontSize="16" FontWeight="SemiBold"
-  Foreground="{StaticResource TextPrimaryBrush}"/>
- 
-     <TextBlock Grid.Row="1" Text="{Binding Url}" 
- FontSize="12"
+        <RowDefinition Height="Auto"/>
+     </Grid.RowDefinitions>
+           
+  <!-- Header Row -->
+<Grid Grid.Row="0">
+    <Grid.ColumnDefinitions>
+     <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+  </Grid.ColumnDefinitions>
+     
+     <TextBlock Grid.Column="0"
+              Text="{Binding Name}" 
+      FontSize="16" 
+      FontWeight="SemiBold"
+              Foreground="{StaticResource TextPrimaryBrush}"/>
+          
+   <Button Grid.Column="1"
+Content="🗑️"
+         Command="{Binding DataContext.DeleteServerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+ CommandParameter="{Binding}"
+      Style="{StaticResource SecondaryButton}"
+        Padding="8,4"
+                FontSize="12"
+         ToolTip="Delete server"
+     Opacity="0.7"/>
+     </Grid>
+          
+        <!-- URL -->
+       <TextBlock Grid.Row="1" 
+          Text="{Binding Url}" 
+      FontSize="13"
+          FontFamily="Consolas"
+        Foreground="{StaticResource AccentBrush}"
+  Margin="0,6,0,0"/>
+   
+               <!-- Info Row -->
+      <Grid Grid.Row="2" Margin="0,8,0,0">
+     <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+           <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+          
+             <StackPanel Grid.Column="0" 
+         Orientation="Horizontal">
+ <!-- Security Badge -->
+        <Border Background="#2D2D30"
+     BorderBrush="{StaticResource BorderBrush}"
+       BorderThickness="1"
+     CornerRadius="4"
+        Padding="8,4"
+                  Margin="0,0,8,0">
+  <StackPanel Orientation="Horizontal">
+        <TextBlock Text="🔒" 
+    FontSize="11" 
+ VerticalAlignment="Center"
+    Margin="0,0,4,0"/>
+            <TextBlock Text="{Binding SecurityMode}" 
+ FontSize="11"
  Foreground="{StaticResource TextSecondaryBrush}"
-Margin="0,4,0,0"/>
- 
-  <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,4,0,0">
-  <TextBlock Text="Security: " FontSize="11"
- Foreground="{StaticResource TextSecondaryBrush}"/>
-     <TextBlock Text="{Binding SecurityMode}" FontSize="11"
-      Foreground="{StaticResource AccentBrush}"/>
-      </StackPanel>
-    </Grid>
- </DataTemplate>
- </ListBox.ItemTemplate>
-      </ListBox>
+     VerticalAlignment="Center"/>
+     </StackPanel>
+       </Border>
+   
+            <!-- Login Type Badge -->
+          <Border Background="#2D2D30"
+ BorderBrush="{StaticResource BorderBrush}"
+                 BorderThickness="1"
+   CornerRadius="4"
+         Padding="8,4">
+  <StackPanel Orientation="Horizontal">
+              <TextBlock Text="👤" 
+               FontSize="11" 
+    VerticalAlignment="Center"
+             Margin="0,0,4,0"/>
+                    <TextBlock Text="{Binding LastLoginType}" 
+  FontSize="11"
+     Foreground="{StaticResource TextSecondaryBrush}"
+ VerticalAlignment="Center"/>
+        </StackPanel>
+           </Border>
+           </StackPanel>
+                  </Grid>
+       
+ <!-- Last Connected -->
+                <TextBlock Grid.Row="3" 
+    FontSize="11"
+      Foreground="{StaticResource TextSecondaryBrush}"
+        Margin="0,8,0,0">
+        <Run Text="Last connected:"/>
+        <Run Text="{Binding LastConnected, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}"/>
+      </TextBlock>
+           </Grid>
+         </Border>
+      </DataTemplate>
+      </ItemsControl.ItemTemplate>
+              </ItemsControl>
+         </ScrollViewer>
 
    <!-- Action Buttons -->
- <StackPanel Grid.Row="3" Orientation="Horizontal" 
-      HorizontalAlignment="Right" Margin="0,16,0,0">
-     <Button Content="Delete" 
-  Command="{Binding DeleteServerCommand}"
-  CommandParameter="{Binding SelectedServer}"
-     Style="{StaticResource SecondaryButton}"
-    Margin="0,0,8,0" Padding="20,8"/>
-  
-         <!-- Connect Button -->
- <Button Content="Connect" 
+ <Grid Grid.Row="3" Margin="0,16,0,0">
+      <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*"/>
+<ColumnDefinition Width="Auto"/>
+ </Grid.ColumnDefinitions>
+     
+       <!-- Connect Button -->
+   <Button Grid.Column="1"
+Content="🔌 Connect to Selected" 
       Command="{Binding ConnectCommand}"
-   Padding="20,8">
+         Padding="24,12"
+  FontSize="14"
+  FontWeight="SemiBold">
    <Button.Style>
        <Style TargetType="Button" BasedOn="{StaticResource ModernButton}">
      <Style.Triggers>
             <DataTrigger Binding="{Binding IsConnected}" Value="True">
       <Setter Property="Visibility" Value="Collapsed"/>
-       </DataTrigger>
-         </Style.Triggers>
-  </Style>
+  </DataTrigger>
+</Style.Triggers>
+    </Style>
    </Button.Style>
      </Button>
         
       <!-- Disconnect Button -->
-      <Button Content="Disconnect" 
+  <Button Grid.Column="1"
+          Content="⚡ Disconnect" 
         Command="{Binding DisconnectCommand}"
-      Padding="20,8">
+     Padding="24,12"
+  FontSize="14"
+    FontWeight="SemiBold">
    <Button.Style>
     <Style TargetType="Button" BasedOn="{StaticResource ModernButton}">
-      <Setter Property="Visibility" Value="Collapsed"/>
+<Setter Property="Visibility" Value="Collapsed"/>
  <Setter Property="Background" Value="{StaticResource ErrorBrush}"/>
 <Style.Triggers>
        <DataTrigger Binding="{Binding IsConnected}" Value="True">
@@ -182,46 +345,53 @@ Margin="0,4,0,0"/>
     </Trigger>
       </Style.Triggers>
      </Style>
-           </Button.Style>
+ </Button.Style>
      </Button>
-</StackPanel>
+ </Grid>
   </Grid>
  </Border>
 
       <!-- Right Panel: Server Discovery -->
-    <Border Grid.Column="2">
-    <Border.Style>
-         <Style TargetType="Border" BasedOn="{StaticResource Card}">
-     <Style.Triggers>
-   <DataTrigger Binding="{Binding IsConnected}" Value="True">
-    <Setter Property="Opacity" Value="0.5"/>
- </DataTrigger>
-          </Style.Triggers>
-    </Style>
-        </Border.Style>
+    <Border Grid.Column="2" 
+   Style="{StaticResource Card}"
+   Padding="20">
   <Grid>
- <Grid.RowDefinitions>
+     <Grid.RowDefinitions>
      <RowDefinition Height="Auto"/>
    <RowDefinition Height="Auto"/>
       <RowDefinition Height="Auto"/>
-        <RowDefinition Height="*"/>
+    <RowDefinition Height="*"/>
 </Grid.RowDefinitions>
 
-   <!-- Title -->
-  <TextBlock Grid.Row="0" Text="Discover Servers" 
-  Style="{StaticResource SubHeaderText}"/>
+<!-- Title -->
+         <StackPanel Grid.Row="0" 
+      Orientation="Horizontal" 
+           Margin="0,0,0,16">
+        <TextBlock Text="🔍" 
+             FontSize="20" 
+             VerticalAlignment="Center" 
+         Margin="0,0,10,0"/>
+  <TextBlock Text="Discover Servers" 
+              FontSize="18" 
+      FontWeight="SemiBold"
+          Foreground="{StaticResource TextPrimaryBrush}"
+              VerticalAlignment="Center"/>
+           </StackPanel>
 
   <!-- Discovery Button -->
-    <Button Grid.Row="1" 
+ <Button Grid.Row="1" 
     Command="{Binding DiscoverServersCommand}"
       HorizontalAlignment="Stretch"
-  Margin="0,0,0,12" Padding="0,12">
+  Margin="0,0,0,16" 
+               Padding="0,14"
+      FontSize="14"
+          FontWeight="Medium">
 <Button.Style>
   <Style TargetType="Button" BasedOn="{StaticResource ModernButton}">
-      <Setter Property="Content" Value="Scan Network"/>
+      <Setter Property="Content" Value="🌐 Scan Network"/>
   <Style.Triggers>
-     <DataTrigger Binding="{Binding IsDiscovering}" Value="True">
- <Setter Property="Content" Value="Scanning..."/>
+ <DataTrigger Binding="{Binding IsDiscovering}" Value="True">
+ <Setter Property="Content" Value="⌛ Scanning..."/>
   <Setter Property="IsEnabled" Value="False"/>
   </DataTrigger>
     </Style.Triggers>
@@ -230,66 +400,112 @@ Margin="0,4,0,0"/>
    </Button>
 
     <!-- Discovery Status -->
-  <TextBlock Grid.Row="2" 
-   Text="{Binding DiscoveryStatus}"
-     FontSize="12"
-          Foreground="{StaticResource TextSecondaryBrush}"
-  TextWrapping="Wrap"
-       Margin="0,0,0,12"
-HorizontalAlignment="Center">
- <TextBlock.Style>
-      <Style TargetType="TextBlock">
-     <Setter Property="Visibility" Value="Collapsed"/>
-  <Style.Triggers>
-   <DataTrigger Binding="{Binding IsDiscovering}" Value="True">
-           <Setter Property="Visibility" Value="Visible"/>
+  <Border Grid.Row="2"
+        Background="{StaticResource SurfaceBrush}"
+             BorderBrush="{StaticResource AccentBrush}"
+      BorderThickness="1"
+      CornerRadius="6"
+              Padding="12,8"
+      Margin="0,0,0,16">
+       <Border.Style>
+        <Style TargetType="Border">
+         <Setter Property="Visibility" Value="Collapsed"/>
+            <Style.Triggers>
+            <DataTrigger Binding="{Binding IsDiscovering}" Value="True">
+ <Setter Property="Visibility" Value="Visible"/>
          </DataTrigger>
-    <DataTrigger Binding="{Binding DiscoveryStatus, Converter={x:Null}}" Value="{x:Null}">
-       <Setter Property="Visibility" Value="Collapsed"/>
-    </DataTrigger>
-  </Style.Triggers>
-  </Style>
-          </TextBlock.Style>
-    </TextBlock>
+     </Style.Triggers>
+     </Style>
+ </Border.Style>
+    <StackPanel Orientation="Horizontal">
+     <TextBlock Text="⏳" 
+       FontSize="14" 
+   VerticalAlignment="Center"
+             Margin="0,0,8,0"/>
+   <TextBlock Text="{Binding DiscoveryStatus}"
+     FontSize="12"
+          Foreground="{StaticResource TextPrimaryBrush}"
+  VerticalAlignment="Center"
+  TextWrapping="Wrap"/>
+           </StackPanel>
+    </Border>
 
-   <!-- Discovered Servers List -->
-  <ListBox Grid.Row="3" 
-   ItemsSource="{Binding DiscoveredServers}"
-     Style="{StaticResource ModernListBox}">
-   <ListBox.ItemContainerStyle>
-  <Style TargetType="ListBoxItem" BasedOn="{StaticResource ModernListBoxItem}">
-        <EventSetter Event="MouseDoubleClick" Handler="DiscoveredServerItem_MouseDoubleClick"/>
- </Style>
-</ListBox.ItemContainerStyle>
-     <ListBox.ItemTemplate>
-  <DataTemplate>
-        <Grid Margin="4">
+<!-- Discovered Servers List -->
+   <ScrollViewer Grid.Row="3" 
+                VerticalScrollBarVisibility="Auto"
+          HorizontalScrollBarVisibility="Disabled">
+    <ItemsControl ItemsSource="{Binding DiscoveredServers}">
+  <ItemsControl.ItemTemplate>
+        <DataTemplate>
+     <Border Background="{StaticResource SurfaceBrush}"
+  BorderBrush="{StaticResource BorderBrush}"
+         BorderThickness="1"
+   CornerRadius="6"
+     Margin="0,0,0,10"
+           Padding="12"
+        Cursor="Hand">
+         <Border.Style>
+        <Style TargetType="Border">
+              <Style.Triggers>
+       <Trigger Property="IsMouseOver" Value="True">
+  <Setter Property="BorderBrush" Value="{StaticResource SuccessBrush}"/>
+   <Setter Property="Background" Value="#2A2A2D"/>
+   </Trigger>
+    </Style.Triggers>
+    </Style>
+           </Border.Style>
+          
+            <Border.InputBindings>
+           <MouseBinding Gesture="LeftDoubleClick" 
+  Command="{Binding DataContext.ConnectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+  CommandParameter="{Binding}"/>
+                </Border.InputBindings>
+        <Grid>
      <Grid.RowDefinitions>
     <RowDefinition Height="Auto"/>
  <RowDefinition Height="Auto"/>
-       <RowDefinition Height="Auto"/>
+   <RowDefinition Height="Auto"/>
  </Grid.RowDefinitions>
+         
+        <StackPanel Grid.Row="0" 
+        Orientation="Horizontal"
+         Margin="0,0,0,6">
+         <TextBlock Text="🆕" 
+ FontSize="12"
+               VerticalAlignment="Center"
+     Margin="0,0,6,0"/>
     
-      <TextBlock Grid.Row="0" Text="{Binding Name}" 
-FontSize="14" FontWeight="Medium"
-   Foreground="{StaticResource TextPrimaryBrush}"/>
+      <TextBlock Text="{Binding Name}" 
+   FontSize="14" FontWeight="Medium"
+   Foreground="{StaticResource TextPrimaryBrush}"
+    VerticalAlignment="Center"/>
+     </StackPanel>
 
-  <TextBlock Grid.Row="1" Text="{Binding Url}" 
-   FontSize="11"
+     <TextBlock Grid.Row="1" 
+          Text="{Binding Url}" 
+FontSize="11"
+  FontFamily="Consolas"
        Foreground="{StaticResource TextSecondaryBrush}"
-Margin="0,2,0,0"
+Margin="0,0,0,6"
        TextWrapping="Wrap"/>
      
-       <TextBlock Grid.Row="2" FontSize="10"
-        Foreground="{StaticResource AccentBrush}"
-  Margin="0,2,0,0">
-     <Run Text="Security: "/>
+  <Border Grid.Row="2"
+      Background="#2D2D30"
+        CornerRadius="3"
+              Padding="6,3"
+     HorizontalAlignment="Left">
+     <TextBlock FontSize="10"
+   Foreground="{StaticResource AccentBrush}">
+ <Run Text="🔒"/>
       <Run Text="{Binding SecurityMode}"/>
  </TextBlock>
+          </Border>
   </Grid>
+      </Border>
    </DataTemplate>
-</ListBox.ItemTemplate>
-   </ListBox>
+  </ItemsControl.ItemTemplate>
+     </ItemsControl>
+   </ScrollViewer>
    </Grid>
  </Border>
   </Grid>

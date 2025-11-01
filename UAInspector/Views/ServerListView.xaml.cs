@@ -27,15 +27,15 @@ namespace UAInspector.Views
 
         private void DiscoveredServerItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
      {
-            // Get the clicked server from the ListBoxItem
-  var listBoxItem = sender as ListBoxItem;
- if (listBoxItem?.DataContext is OpcServerInfo server)
+            // Get the clicked server from the Border
+    var border = sender as FrameworkElement;
+ if (border?.DataContext is OpcServerInfo server)
  {
-       var viewModel = DataContext as ServerListViewModel;
+    var viewModel = DataContext as ServerListViewModel;
    if (viewModel != null)
   {
-    // Add to recent servers and select it
-   viewModel.SelectedServer = server;
+    // Add to saved servers and select it
+       viewModel.SelectedServer = server;
        
    // Store it
      var storageService = new UAInspector.Core.Services.StorageService();
@@ -46,7 +46,7 @@ namespace UAInspector.Views
    {
    viewModel.RefreshCommand.Execute(null);
     }
-           
+    
  // Select the newly added server
         viewModel.SelectedServer = server;
        
@@ -58,5 +58,5 @@ namespace UAInspector.Views
     }
  }
         }
-}
+    }
 }

@@ -6,14 +6,14 @@ using UAInspector.Core.Services;
 
 namespace UAInspector.ViewModels
 {
-  /// <summary>
+    /// <summary>
     /// ViewModel for the server list/discovery view
   /// </summary>
     public class ServerListViewModel : ViewModelBase
     {
 private readonly StorageService _storageService;
 private readonly MainViewModel _mainViewModel;
-        private readonly OpcClientService _opcClientService;
+    private readonly OpcClientService _opcClientService;
         private readonly DiscoveryService _discoveryService;
  private OpcServerInfo _selectedServer;
     private string _manualUrl;
@@ -43,7 +43,7 @@ get => _isDiscovering;
 
       public string DiscoveryStatus
  {
-       get => _discoveryStatus;
+get => _discoveryStatus;
  set => SetProperty(ref _discoveryStatus, value);
   }
 
@@ -54,7 +54,7 @@ get => _isDiscovering;
 
         /// <summary>
  /// Get connected server from MainViewModel
-        /// </summary>
+      /// </summary>
         public OpcServerInfo ConnectedServer => _mainViewModel.CurrentServer;
 
   // Commands
@@ -79,13 +79,13 @@ public ICommand RefreshCommand { get; }
         // Subscribe to MainViewModel connection state changes
 _mainViewModel.PropertyChanged += MainViewModel_PropertyChanged;
 
-   // Initialize commands
-     ConnectCommand = new RelayCommand(Connect, () => !IsConnected && SelectedServer != null);
+   // Initialize commands - Use RelayCommand<T> for parameter support
+ ConnectCommand = new RelayCommand<OpcServerInfo>(Connect, (server) => !IsConnected);
   DisconnectCommand = new RelayCommand(Disconnect, () => IsConnected);
   AddManualCommand = new RelayCommand(AddManualServer, () => !IsConnected && !string.IsNullOrWhiteSpace(ManualUrl));
     DiscoverServersCommand = new RelayCommand(DiscoverServers, () => !IsConnected && !IsDiscovering);
   DeleteServerCommand = new RelayCommand<OpcServerInfo>(DeleteServer, (server) => !IsConnected);
-       RefreshCommand = new RelayCommand(LoadServers);
+    RefreshCommand = new RelayCommand(LoadServers);
 
  // Load saved servers
     LoadServers();
@@ -94,14 +94,14 @@ _mainViewModel.PropertyChanged += MainViewModel_PropertyChanged;
         private void MainViewModel_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
  {
           if (e.PropertyName == nameof(MainViewModel.IsConnected) || 
-       e.PropertyName == nameof(MainViewModel.CurrentServer))
+    e.PropertyName == nameof(MainViewModel.CurrentServer))
      {
     // Notify UI of connection state changes
       OnPropertyChanged(nameof(IsConnected));
     OnPropertyChanged(nameof(ConnectedServer));
   
   // Update command states
-   (ConnectCommand as RelayCommand)?.RaiseCanExecuteChanged();
+   (ConnectCommand as RelayCommand<OpcServerInfo>)?.RaiseCanExecuteChanged();
   (DisconnectCommand as RelayCommand)?.RaiseCanExecuteChanged();
      (AddManualCommand as RelayCommand)?.RaiseCanExecuteChanged();
    (DeleteServerCommand as RelayCommand<OpcServerInfo>)?.RaiseCanExecuteChanged();
@@ -119,36 +119,39 @@ _mainViewModel.PropertyChanged += MainViewModel_PropertyChanged;
    }
  }
 
-  private async void Connect()
+        private async void Connect(OpcServerInfo server)
         {
-if (SelectedServer == null)
+      // Use parameter if provided, otherwise use SelectedServer
+  var serverToConnect = server ?? SelectedServer;
+  
+            if (serverToConnect == null)
      return;
 
      try
  {
 // For now, use anonymous login
    // TODO: Show login dialog to get credentials
-       var success = await _opcClientService.ConnectAsync(
-               SelectedServer,
+    var success = await _opcClientService.ConnectAsync(
+      serverToConnect,
     LoginType.Anonymous
-     );
+  );
 
         if (success)
      {
-    _mainViewModel.OnConnected(SelectedServer);
-System.Diagnostics.Debug.WriteLine($"Connected to {SelectedServer.Name}");
-                
+_mainViewModel.OnConnected(serverToConnect);
+System.Diagnostics.Debug.WriteLine($"Connected to {serverToConnect.Name}");
+    
     System.Windows.MessageBox.Show(
-                $"Successfully connected to {SelectedServer.Name}",
+     $"Successfully connected to {serverToConnect.Name}",
     "Connection Success",
-         System.Windows.MessageBoxButton.OK,
-            System.Windows.MessageBoxImage.Information);
+       System.Windows.MessageBoxButton.OK,
+ System.Windows.MessageBoxImage.Information);
     }
        else
      {
-        System.Diagnostics.Debug.WriteLine($"Failed to connect to {SelectedServer.Name}");
+        System.Diagnostics.Debug.WriteLine($"Failed to connect to {serverToConnect.Name}");
    System.Windows.MessageBox.Show(
-  $"Failed to connect to {SelectedServer.Name}",
+  $"Failed to connect to {serverToConnect.Name}",
         "Connection Error",
       System.Windows.MessageBoxButton.OK,
   System.Windows.MessageBoxImage.Error);
@@ -159,7 +162,7 @@ System.Diagnostics.Debug.WriteLine($"Connected to {SelectedServer.Name}");
      System.Diagnostics.Debug.WriteLine($"Connection error: {ex.Message}");
          System.Windows.MessageBox.Show(
    $"Connection error: {ex.Message}",
-        "Connection Error",
+  "Connection Error",
  System.Windows.MessageBoxButton.OK,
      System.Windows.MessageBoxImage.Error);
 }
@@ -171,41 +174,41 @@ System.Diagnostics.Debug.WriteLine($"Connected to {SelectedServer.Name}");
         return;
 
          try
-        {
+    {
   await _opcClientService.DisconnectAsync();
 
-              var serverName = ConnectedServer?.Name ?? "server";
+       var serverName = ConnectedServer?.Name ?? "server";
      
-            _mainViewModel.OnDisconnected();
-          
+ _mainViewModel.OnDisconnected();
+        
    System.Diagnostics.Debug.WriteLine($"Disconnected from {serverName}");
 
     System.Windows.MessageBox.Show(
       $"Disconnected from {serverName}",
-        "Disconnected",
-             System.Windows.MessageBoxButton.OK,
+  "Disconnected",
+    System.Windows.MessageBoxButton.OK,
        System.Windows.MessageBoxImage.Information);
       }
     catch (Exception ex)
    {
        System.Diagnostics.Debug.WriteLine($"Disconnect error: {ex.Message}");
      System.Windows.MessageBox.Show(
-    $"Disconnect error: {ex.Message}",
+  $"Disconnect error: {ex.Message}",
  "Disconnect Error",
-      System.Windows.MessageBoxButton.OK,
+    System.Windows.MessageBoxButton.OK,
    System.Windows.MessageBoxImage.Error);
   }
       }
 
       private void AddManualServer()
-     {
+   {
     if (string.IsNullOrWhiteSpace(ManualUrl))
      return;
 
       // Validate URL format
 if (!ManualUrl.Trim().StartsWith("opc.tcp://", StringComparison.OrdinalIgnoreCase))
    {
-    System.Windows.MessageBox.Show(
+  System.Windows.MessageBox.Show(
       "Server URL must start with 'opc.tcp://'",
       "Invalid URL",
       System.Windows.MessageBoxButton.OK,
@@ -217,7 +220,7 @@ if (!ManualUrl.Trim().StartsWith("opc.tcp://", StringComparison.OrdinalIgnoreCas
      {
  Id = Guid.NewGuid().ToString(),
    Name = ExtractServerNameFromUrl(ManualUrl.Trim()),
-        Url = ManualUrl.Trim(),
+      Url = ManualUrl.Trim(),
    Manufacturer = "Unknown",
  ProductName = "Unknown",
   SecurityMode = "None",
@@ -238,7 +241,7 @@ if (!ManualUrl.Trim().StartsWith("opc.tcp://", StringComparison.OrdinalIgnoreCas
         {
   var uri = new Uri(url);
         return $"{uri.Host}:{uri.Port}";
-          }
+ }
       catch
    {
    return "Manual Server";
@@ -255,27 +258,27 @@ DiscoveredServers.Clear();
 {
         // Discover on common ports
     DiscoveryStatus = "Checking common OPC UA ports...";
-      var servers = await _discoveryService.DiscoverServersOnNetworkAsync();
+    var servers = await _discoveryService.DiscoverServersOnNetworkAsync();
   
       if (servers.Count == 0)
  {
-      // Try LDS discovery
+// Try LDS discovery
         DiscoveryStatus = "Checking Local Discovery Server...";
         servers = await _discoveryService.DiscoverServersWithLDSAsync();
  }
 
-         if (servers.Count > 0)
+    if (servers.Count > 0)
    {
     DiscoveryStatus = $"Found {servers.Count} server(s)";
      foreach (var server in servers)
   {
    DiscoveredServers.Add(server);
-          }
-      }
+   }
+   }
    else
-     {
+{
    DiscoveryStatus = "No servers found";
-      System.Windows.MessageBox.Show(
+  System.Windows.MessageBox.Show(
      "No OPC UA servers found on the network.\n\n" +
    "Make sure:\n" +
      "- An OPC UA server is running\n" +
@@ -283,11 +286,11 @@ DiscoveredServers.Clear();
     "- Firewall allows OPC UA communication",
     "Discovery Result",
  System.Windows.MessageBoxButton.OK,
-     System.Windows.MessageBoxImage.Information);
+   System.Windows.MessageBoxImage.Information);
     }
        }
     catch (Exception ex)
-         {
+     {
   DiscoveryStatus = "Discovery failed";
 System.Diagnostics.Debug.WriteLine($"Discovery error: {ex.Message}");
    System.Windows.MessageBox.Show(
@@ -307,14 +310,14 @@ System.Diagnostics.Debug.WriteLine($"Discovery error: {ex.Message}");
   if (server == null)
      return;
 
-        var result = System.Windows.MessageBox.Show(
+      var result = System.Windows.MessageBox.Show(
     $"Are you sure you want to delete '{server.Name}'?",
    "Confirm Delete",
 System.Windows.MessageBoxButton.YesNo,
      System.Windows.MessageBoxImage.Question);
 
             if (result == System.Windows.MessageBoxResult.Yes)
-        {
+{
        var servers = _storageService.LoadServers();
      servers.RemoveAll(s => s.Id == server.Id);
   _storageService.SaveServers(servers);
