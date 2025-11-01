@@ -18,7 +18,7 @@ namespace UAInspector.Core.Services
         {
             try
             {
-                _updateManager = new UpdateManager("https://github.com/quimalborch/UAInspector/releases/download");
+                _updateManager = new UpdateManager(new GithubSource("https://github.com/quimalborch/UAInspector", null, false));
                 Debug.WriteLine("UpdateManager initialized successfully");
             }
             catch (Exception ex)
