@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using UAInspector.ViewModels;
 using Velopack;
 using Velopack.Sources;
 
@@ -13,11 +14,13 @@ namespace UAInspector.Core.Services
     {
         private readonly UpdateManager _updateManager;
         private UpdateInfo _pendingUpdate;
+        private MainViewModel _mainViewModel;
 
-        public UpdateService()
+        public UpdateService(MainViewModel mainViewModel)
         {
             try
             {
+                _mainViewModel = mainViewModel;
                 _updateManager = new UpdateManager(new GithubSource("https://github.com/quimalborch/UAInspector", null, false));
                 Debug.WriteLine("UpdateManager initialized successfully");
             }
@@ -41,7 +44,7 @@ namespace UAInspector.Core.Services
                 }
 
                 Debug.WriteLine("Checking for updates...");
-                _pendingUpdate = await _updateManager.CheckForUpdatesAsync();
+                _pendingUpdate = await _updateManager.CheckForUpdatesAsync().ConfigureAwait(true);
 
                 if (_pendingUpdate == null)
                 {
@@ -73,7 +76,7 @@ namespace UAInspector.Core.Services
                 }
 
                 Debug.WriteLine("Downloading updates...");
-                await _updateManager.DownloadUpdatesAsync(_pendingUpdate);
+                await _updateManager.DownloadUpdatesAsync(_pendingUpdate, Progress);
 
                 Debug.WriteLine("Applying updates and restarting...");
                 _updateManager.ApplyUpdatesAndRestart(_pendingUpdate);
@@ -83,6 +86,12 @@ namespace UAInspector.Core.Services
                 Debug.WriteLine($"Error applying updates: {ex.Message}");
                 throw;
             }
+        }
+
+        private void Progress(int percent)
+        {
+            // progress can be sent from other threads
+            _mainViewModel.StatusMessage = $"Downloading update... {percent}%";
         }
 
         /// <summary>

@@ -100,7 +100,7 @@ namespace UAInspector.ViewModels
         {
             _storageService = new StorageService();
             _opcClientService = new OpcClientService();
-            _updateService = new UpdateService();
+            _updateService = new UpdateService(this);
             RecentServers = new ObservableCollection<OpcServerInfo>();
             Settings = _storageService.LoadSettings();
 
