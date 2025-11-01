@@ -51,7 +51,7 @@
   <Button Content="🏠 Servers" 
    Command="{Binding ShowServerListCommand}"
       Style="{StaticResource SecondaryButton}"
-          Margin="0,0,8,0" Padding="16,8"/>
+    Margin="0,0,8,0" Padding="16,8"/>
           <Button Content="🔍 Explorer" 
   Command="{Binding ShowExplorerCommand}"
     Margin="0,0,8,0" Padding="16,8"
@@ -70,9 +70,29 @@
  <Button Content="⚙ Settings" 
            Command="{Binding ShowSettingsCommand}"
        Style="{StaticResource SecondaryButton}"
-           Padding="16,8"/>
+           Margin="0,0,8,0" Padding="16,8"/>
+
+          <!-- Update Now Button (only visible when update is available) -->
+       <Button Content="🔄 Update Now" 
+                Command="{Binding ApplyUpdateCommand}"
+            Padding="16,8"
+     ToolTip="A new update is available. Click to download and install.">
+     <Button.Style>
+        <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+   <Setter Property="Visibility" Value="Collapsed"/>
+  <Setter Property="BorderBrush" Value="#FFD700"/>
+  <Setter Property="BorderThickness" Value="2"/>
+     <Setter Property="Background" Value="#33FFD700"/>
+     <Style.Triggers>
+          <DataTrigger Binding="{Binding IsUpdateAvailable}" Value="True">
+  <Setter Property="Visibility" Value="Visible"/>
+ </DataTrigger>
+        </Style.Triggers>
+         </Style>
+         </Button.Style>
+ </Button>
  </StackPanel>
-            </Grid>
+      </Grid>
     </Border>
 
         <!-- Main Content Area -->
