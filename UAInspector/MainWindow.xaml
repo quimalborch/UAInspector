@@ -121,9 +121,12 @@
      </StackPanel>
 
     <!-- App Version -->
-     <TextBlock Grid.Column="2" Text="v1.0.0" 
+     <TextBlock Grid.Column="2" 
+           Text="{Binding AppVersion}"
        Foreground="{StaticResource TextSecondaryBrush}"
-      FontSize="11" VerticalAlignment="Center"/>
+      FontSize="11" 
+           VerticalAlignment="Center"
+     ToolTip="Application Version"/>
  </Grid>
         </Border>
   </Grid>

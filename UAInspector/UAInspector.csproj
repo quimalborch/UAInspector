@@ -127,6 +127,7 @@
     <Compile Include="Helpers\BoolToRWConverter.cs" />
     <Compile Include="Helpers\InverseBooleanConverter.cs" />
     <Compile Include="Helpers\StartupHelper.cs" />
+    <Compile Include="Helpers\VersionConverter.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
