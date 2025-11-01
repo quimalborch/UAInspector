@@ -4,8 +4,12 @@
     <OutputType>WinExe</OutputType>
     <UseWPF>true</UseWPF>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-    <AssemblyVersion>1.0.3</AssemblyVersion>
+    <AssemblyVersion>1.0.4</AssemblyVersion>
   </PropertyGroup>
+  <ItemGroup>
+    <ApplicationDefinition Remove="App.xaml" />
+	<Page Include="App.xaml"/>
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BitFaster.Caching" Version="2.5.4" />
     <PackageReference Include="BouncyCastle.Cryptography" Version="2.6.2" />
@@ -25,6 +29,7 @@
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="8.0.1" />
     <PackageReference Include="System.Formats.Asn1" Version="9.0.9" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="6.1.2" />
+    <PackageReference Include="Velopack" Version="0.0.1298" />
   </ItemGroup>
   <ItemGroup>
     <Page Update="Resources\Styles.xaml">
