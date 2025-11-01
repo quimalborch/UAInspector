@@ -12,6 +12,7 @@
         
             <!-- Converters -->
             <helpers:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
+            <helpers:BoolToRWConverter x:Key="BoolToRWConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

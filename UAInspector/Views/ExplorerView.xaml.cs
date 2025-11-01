@@ -6,39 +6,45 @@ using UAInspector.ViewModels;
 namespace UAInspector.Views
 {
     /// <summary>
- /// Interaction logic for ExplorerView.xaml
+    /// Interaction logic for ExplorerView.xaml
     /// </summary>
     public partial class ExplorerView : UserControl
     {
-public ExplorerView()
-     {
+        public ExplorerView()
+        {
             InitializeComponent();
         }
 
+        /// <summary>
+        /// When a folder is expanded, load its child folders (lazy loading)
+        /// </summary>
         private async void TreeViewItem_Expanded(object sender, RoutedEventArgs e)
-      {
-       var treeViewItem = e.OriginalSource as TreeViewItem;
-      if (treeViewItem?.DataContext is OpcNodeInfo node)
+        {
+            var treeViewItem = e.OriginalSource as TreeViewItem;
+            if (treeViewItem?.DataContext is OpcNodeInfo folder)
             {
                 var viewModel = DataContext as ExplorerViewModel;
-       if (viewModel != null && node.HasChildren && !node.IsLoaded)
-          {
-     await viewModel.LoadChildNodesAsync(node);
- }
+                if (viewModel != null && folder.HasChildren && !folder.IsLoaded)
+                {
+                    await viewModel.LoadChildFoldersAsync(folder);
+                }
             }
         }
 
+        /// <summary>
+        /// When a folder is selected, update SelectedFolder which triggers tag loading
+        /// </summary>
         private void TreeViewItem_Selected(object sender, RoutedEventArgs e)
         {
-   var treeViewItem = e.OriginalSource as TreeViewItem;
-      if (treeViewItem?.DataContext is OpcNodeInfo node)
+            var treeViewItem = e.OriginalSource as TreeViewItem;
+            if (treeViewItem?.DataContext is OpcNodeInfo folder)
             {
- var viewModel = DataContext as ExplorerViewModel;
-           if (viewModel != null)
-         {
-       viewModel.SelectedNode = node;
-    }
-       }
+                var viewModel = DataContext as ExplorerViewModel;
+                if (viewModel != null)
+                {
+                    viewModel.SelectedFolder = folder;
+                }
+            }
         }
     }
 }

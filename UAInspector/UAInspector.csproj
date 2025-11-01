@@ -124,6 +124,7 @@
     </ApplicationDefinition>
     <Compile Include="Core\Services\DiscoveryService.cs" />
     <Compile Include="Core\Services\OpcClientService.cs" />
+    <Compile Include="Helpers\BoolToRWConverter.cs" />
     <Compile Include="Helpers\InverseBooleanConverter.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />

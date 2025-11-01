@@ -10,399 +10,372 @@ using UAInspector.Core.Services;
 
 namespace UAInspector.ViewModels
 {
- /// <summary>
-    /// ViewModel for OPC UA address space explorer
-    /// </summary>
-    public class ExplorerViewModel : ViewModelBase
+    /// <summary>
+ /// ViewModel for OPC UA address space explorer
+ /// </summary>
+  public class ExplorerViewModel : ViewModelBase
     {
         private readonly StorageService _storageService;
-        private readonly MainViewModel _mainViewModel;
-   private readonly OpcClientService _opcClientService;
+  private readonly MainViewModel _mainViewModel;
+    private readonly OpcClientService _opcClientService;
         
-        private OpcNodeInfo _selectedNode;
+        private OpcNodeInfo _selectedFolder;
+        private OpcNodeInfo _selectedTag;
         private bool _isLoading;
-   private string _writeValue;
-        private bool _isMonitoring;
-        private string _searchText;
+        private string _writeValue;
+      private bool _isSubscribed;
 
-        public ObservableCollection<OpcNodeInfo> RootNodes { get; }
-        public ObservableCollection<OpcNodeInfo> MonitoredNodes { get; }
+        public ObservableCollection<OpcNodeInfo> FolderTree { get; }
+        public ObservableCollection<OpcNodeInfo> TagsInFolder { get; }
 
-        public OpcNodeInfo SelectedNode
+        /// <summary>
+/// Selected folder in the tree (left panel)
+/// </summary>
+      public OpcNodeInfo SelectedFolder
         {
-         get => _selectedNode;
+            get => _selectedFolder;
        set
-{
-                if (SetProperty(ref _selectedNode, value))
-         {
-            OnPropertyChanged(nameof(IsNodeSelected));
-  OnPropertyChanged(nameof(CanWrite));
-         OnPropertyChanged(nameof(CanMonitor));
-                (ReadValueCommand as RelayCommand)?.RaiseCanExecuteChanged();
-               (WriteValueCommand as RelayCommand)?.RaiseCanExecuteChanged();
-      (MonitorNodeCommand as RelayCommand)?.RaiseCanExecuteChanged();
-    (UnmonitorNodeCommand as RelayCommand)?.RaiseCanExecuteChanged();
-       (CopyNodeIdCommand as RelayCommand)?.RaiseCanExecuteChanged();
-
-        // Auto-read value when node is selected
-       if (value?.NodeClass == OpcNodeClass.Variable)
-            {
-  ReadValue();
+       {
+    if (SetProperty(ref _selectedFolder, value))
+      {
+      _ = LoadTagsForFolderAsync(value);
  }
-                }
-            }
+ }
+        }
+
+        /// <summary>
+        /// Selected tag in the tags list (right panel)
+        /// </summary>
+ public OpcNodeInfo SelectedTag
+        {
+     get => _selectedTag;
+   set
+            {
+       if (SetProperty(ref _selectedTag, value))
+     {
+          OnPropertyChanged(nameof(IsTagSelected));
+               OnPropertyChanged(nameof(CanWrite));
+         (WriteValueCommand as RelayCommand)?.RaiseCanExecuteChanged();
+(CopyNodeIdCommand as RelayCommand)?.RaiseCanExecuteChanged();
+  
+   // Update write value textbox with current value
+   if (value?.Value != null)
+  {
+              WriteValue = value.Value.ToString();
+     }
+        }
+ }
         }
 
         public bool IsLoading
-      {
-      get => _isLoading;
-       set => SetProperty(ref _isLoading, value);
+  {
+            get => _isLoading;
+     set => SetProperty(ref _isLoading, value);
         }
 
         public string WriteValue
         {
-         get => _writeValue;
+            get => _writeValue;
             set => SetProperty(ref _writeValue, value);
-        }
+ }
 
-     public bool IsMonitoring
-   {
-    get => _isMonitoring;
-set => SetProperty(ref _isMonitoring, value);
-        }
-
-    public string SearchText
+        public bool IsSubscribed
         {
-            get => _searchText;
-      set => SetProperty(ref _searchText, value);
-}
+      get => _isSubscribed;
+            set => SetProperty(ref _isSubscribed, value);
+        }
 
-        public bool IsNodeSelected => SelectedNode != null;
-        public bool CanWrite => SelectedNode?.IsWritable == true;
-        public bool CanMonitor => SelectedNode?.NodeClass == OpcNodeClass.Variable;
+     public bool IsTagSelected => SelectedTag != null;
+   public bool CanWrite => SelectedTag?.IsWritable == true;
 
-        public string ServerName => _mainViewModel.CurrentServer?.Name ?? "Unknown";
-  public string ServerUrl => _mainViewModel.CurrentServer?.Url ?? "";
+   public string ServerName => _mainViewModel.CurrentServer?.Name ?? "Unknown";
+     public string ServerUrl => _mainViewModel.CurrentServer?.Url ?? "";
 
         // Commands
         public ICommand RefreshCommand { get; }
-        public ICommand ReadValueCommand { get; }
-        public ICommand WriteValueCommand { get; }
- public ICommand MonitorNodeCommand { get; }
-  public ICommand UnmonitorNodeCommand { get; }
-public ICommand CopyNodeIdCommand { get; }
-   public ICommand SearchCommand { get; }
-      public ICommand ClearMonitoredCommand { get; }
+  public ICommand WriteValueCommand { get; }
+ public ICommand CopyNodeIdCommand { get; }
+        public ICommand RefreshTagsCommand { get; }
 
-     public ExplorerViewModel(StorageService storageService, MainViewModel mainViewModel)
+        public ExplorerViewModel(StorageService storageService, MainViewModel mainViewModel)
+   {
+            _storageService = storageService;
+  _mainViewModel = mainViewModel;
+            _opcClientService = mainViewModel.OpcClientService;
+
+            FolderTree = new ObservableCollection<OpcNodeInfo>();
+         TagsInFolder = new ObservableCollection<OpcNodeInfo>();
+
+       // Initialize commands
+            RefreshCommand = new RelayCommand(async () => await LoadRootFoldersAsync());
+            WriteValueCommand = new RelayCommand(WriteValueToTag, () => CanWrite && !string.IsNullOrWhiteSpace(WriteValue));
+      CopyNodeIdCommand = new RelayCommand(CopyNodeId, () => IsTagSelected);
+            RefreshTagsCommand = new RelayCommand(async () => await LoadTagsForFolderAsync(SelectedFolder));
+
+            // Load root folders
+   _ = LoadRootFoldersAsync();
+        }
+
+        /// <summary>
+     /// Load root folders (only Objects, no Variables)
+        /// </summary>
+   private async Task LoadRootFoldersAsync()
         {
-       _storageService = storageService;
-         _mainViewModel = mainViewModel;
-      _opcClientService = mainViewModel.OpcClientService;
+            IsLoading = true;
+ try
+            {
+         FolderTree.Clear();
+     TagsInFolder.Clear();
 
-     RootNodes = new ObservableCollection<OpcNodeInfo>();
-        MonitoredNodes = new ObservableCollection<OpcNodeInfo>();
+     // Browse from root
+      var nodes = await _opcClientService.BrowseAsync(null);
 
-      // Initialize commands
-            RefreshCommand = new RelayCommand(async () => await LoadRootNodesAsync());
-            ReadValueCommand = new RelayCommand(ReadValue, () => SelectedNode?.NodeClass == OpcNodeClass.Variable);
- WriteValueCommand = new RelayCommand(WriteValueToNode, () => CanWrite && !string.IsNullOrWhiteSpace(WriteValue));
-    MonitorNodeCommand = new RelayCommand(MonitorNode, () => CanMonitor && !IsNodeMonitored(SelectedNode));
-            UnmonitorNodeCommand = new RelayCommand(UnmonitorNode, () => IsNodeMonitored(SelectedNode));
- CopyNodeIdCommand = new RelayCommand(CopyNodeId, () => IsNodeSelected);
-            SearchCommand = new RelayCommand(Search);
-          ClearMonitoredCommand = new RelayCommand(ClearMonitored);
+     // Only add folders (Objects), not Variables
+                foreach (var node in nodes.Where(n => n.NodeClass == OpcNodeClass.Object || n.NodeClass == OpcNodeClass.ObjectType))
+     {
+    FolderTree.Add(node);
+   }
 
-            // Load root nodes
-            _ = LoadRootNodesAsync();
-     }
-
-        private async Task LoadRootNodesAsync()
-      {
-     IsLoading = true;
-try
-  {
-            RootNodes.Clear();
-
-       // Browse from root (Objects folder)
-            var nodes = await _opcClientService.BrowseAsync(null);
-
-   foreach (var node in nodes)
+     System.Diagnostics.Debug.WriteLine($"Loaded {FolderTree.Count} folders");
+            }
+            catch (Exception ex)
          {
-             RootNodes.Add(node);
+     System.Diagnostics.Debug.WriteLine($"Error loading folders: {ex.Message}");
+       System.Windows.MessageBox.Show(
+    $"Failed to load folders: {ex.Message}",
+      "Error",
+             System.Windows.MessageBoxButton.OK,
+     System.Windows.MessageBoxImage.Error);
+            }
+     finally
+       {
+         IsLoading = false;
+}
+  }
+
+        /// <summary>
+        /// Load child folders for a parent folder (lazy loading)
+        /// </summary>
+        public async Task LoadChildFoldersAsync(OpcNodeInfo parentFolder)
+        {
+            if (parentFolder == null || parentFolder.IsLoaded)
+     return;
+
+          try
+ {
+     parentFolder.Children.Clear();
+
+          var nodes = await _opcClientService.BrowseAsync(parentFolder.NodeId);
+
+                // Only add folders (Objects), not Variables
+      foreach (var node in nodes.Where(n => n.NodeClass == OpcNodeClass.Object || n.NodeClass == OpcNodeClass.ObjectType))
+     {
+       parentFolder.Children.Add(node);
+              }
+
+parentFolder.IsLoaded = true;
+     System.Diagnostics.Debug.WriteLine($"Loaded {parentFolder.Children.Count} child folders for {parentFolder.DisplayName}");
+        }
+      catch (Exception ex)
+            {
+       System.Diagnostics.Debug.WriteLine($"Error loading child folders: {ex.Message}");
+            }
+  }
+
+  /// <summary>
+ /// Load all tags (variables) for the selected folder and subscribe to them
+        /// </summary>
+        private async Task LoadTagsForFolderAsync(OpcNodeInfo folder)
+{
+ if (folder == null)
+{
+       TagsInFolder.Clear();
+ return;
             }
 
-     System.Diagnostics.Debug.WriteLine($"Loaded {nodes.Count} root nodes");
-     }
-     catch (Exception ex)
- {
-         System.Diagnostics.Debug.WriteLine($"Error loading root nodes: {ex.Message}");
-         System.Windows.MessageBox.Show(
-$"Failed to load nodes: {ex.Message}",
-         "Error",
-          System.Windows.MessageBoxButton.OK,
-        System.Windows.MessageBoxImage.Error);
-      }
-            finally
-   {
-       IsLoading = false;
-       }
-        }
-
-        public async Task LoadChildNodesAsync(OpcNodeInfo parentNode)
-     {
- if (parentNode == null || parentNode.IsLoaded)
-     return;
-
-      try
+    IsLoading = true;
+            try
             {
-      parentNode.Children.Clear();
+           // Unsubscribe from previous tags
+       if (IsSubscribed)
+  {
+     _opcClientService.RemoveAllMonitoredItems();
+       IsSubscribed = false;
+}
 
-       var nodes = await _opcClientService.BrowseAsync(parentNode.NodeId);
+     TagsInFolder.Clear();
 
- foreach (var node in nodes)
-      {
-         parentNode.Children.Add(node);
-      }
+                // Browse the folder to get all children
+        var nodes = await _opcClientService.BrowseAsync(folder.NodeId);
 
- parentNode.IsLoaded = true;
-           System.Diagnostics.Debug.WriteLine($"Loaded {nodes.Count} children for {parentNode.DisplayName}");
-      }
-            catch (Exception ex)
- {
-         System.Diagnostics.Debug.WriteLine($"Error loading child nodes: {ex.Message}");
+       // Only add Variables (tags)
+      var tags = nodes.Where(n => n.NodeClass == OpcNodeClass.Variable).ToList();
+
+      foreach (var tag in tags)
+           {
+            TagsInFolder.Add(tag);
+        }
+
+    // If we have tags, create subscription for automatic updates
+   if (TagsInFolder.Count > 0)
+                {
+        await SubscribeToTagsAsync();
+ }
+
+      System.Diagnostics.Debug.WriteLine($"Loaded {TagsInFolder.Count} tags for folder {folder.DisplayName}");
+       }
+  catch (Exception ex)
+    {
+ System.Diagnostics.Debug.WriteLine($"Error loading tags: {ex.Message}");
+       System.Windows.MessageBox.Show(
+         $"Failed to load tags: {ex.Message}",
+               "Error",
+        System.Windows.MessageBoxButton.OK,
+        System.Windows.MessageBoxImage.Error);
+            }
+   finally
+     {
+                IsLoading = false;
      }
         }
 
-        private async void ReadValue()
+      /// <summary>
+        /// Subscribe to all tags in the current folder for automatic updates
+        /// </summary>
+        private async Task SubscribeToTagsAsync()
+        {
+try
+      {
+         // Create subscription if not exists
+   if (!IsSubscribed)
+             {
+            await _opcClientService.CreateSubscriptionAsync(1000); // 1 second interval
+    }
+
+     // Subscribe to each tag
+    foreach (var tag in TagsInFolder)
+      {
+     var tagNodeId = tag.NodeId; // Capture for closure
+   _opcClientService.AddMonitoredItem(tagNodeId, (item, e) =>
+            {
+       // Update value on notification
+     if (e.NotificationValue is MonitoredItemNotification notification)
+           {
+             System.Windows.Application.Current.Dispatcher.Invoke(() =>
+           {
+         var tagToUpdate = TagsInFolder.FirstOrDefault(t => t.NodeId == tagNodeId);
+              if (tagToUpdate != null)
    {
-      if (SelectedNode?.NodeClass != OpcNodeClass.Variable)
+       tagToUpdate.Value = notification.Value.Value;
+    tagToUpdate.Timestamp = notification.Value.SourceTimestamp;
+   tagToUpdate.Quality = notification.Value.StatusCode.ToString();
+
+    // Also update selected tag if it's the same
+                if (SelectedTag?.NodeId == tagNodeId)
+              {
+            OnPropertyChanged(nameof(SelectedTag));
+       }
+           }
+           });
+             }
+   });
+  }
+
+     IsSubscribed = true;
+     System.Diagnostics.Debug.WriteLine($"Subscribed to {TagsInFolder.Count} tags");
+     }
+            catch (Exception ex)
+        {
+                System.Diagnostics.Debug.WriteLine($"Error subscribing to tags: {ex.Message}");
+    }
+    }
+
+        /// <summary>
+  /// Write value to the selected tag
+   /// </summary>
+        private async void WriteValueToTag()
+        {
+      if (!CanWrite || string.IsNullOrWhiteSpace(WriteValue))
      return;
 
-      try
-         {
-       var dataValue = await _opcClientService.ReadValueAsync(SelectedNode.NodeId);
-                if (dataValue != null)
-     {
-       SelectedNode.Value = dataValue.Value;
-    SelectedNode.Timestamp = dataValue.SourceTimestamp;
-        SelectedNode.Quality = dataValue.StatusCode.ToString();
+            try
+            {
+              // Parse value based on data type
+             object valueToWrite = ParseValue(WriteValue, SelectedTag.DataType);
 
-// Update UI
-      OnPropertyChanged(nameof(SelectedNode));
+           var success = await _opcClientService.WriteValueAsync(SelectedTag.NodeId, valueToWrite);
+   
+     if (success)
+    {
+ System.Windows.MessageBox.Show(
+    $"Successfully wrote value '{WriteValue}' to {SelectedTag.DisplayName}",
+  "Write Success",
+    System.Windows.MessageBoxButton.OK,
+       System.Windows.MessageBoxImage.Information);
 
-      System.Diagnostics.Debug.WriteLine($"Read value: {SelectedNode.Value} from {SelectedNode.DisplayName}");
-   }
+         // Value will be updated automatically by subscription
         }
-            catch (Exception ex)
-   {
-    System.Diagnostics.Debug.WriteLine($"Error reading value: {ex.Message}");
-             System.Windows.MessageBox.Show(
-                    $"Failed to read value: {ex.Message}",
-     "Read Error",
+        else
+         {
+           System.Windows.MessageBox.Show(
+  $"Failed to write value to {SelectedTag.DisplayName}",
+                   "Write Failed",
        System.Windows.MessageBoxButton.OK,
+       System.Windows.MessageBoxImage.Warning);
+       }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error writing value: {ex.Message}");
+       System.Windows.MessageBox.Show(
+                  $"Failed to write value: {ex.Message}",
+      "Write Error",
+          System.Windows.MessageBoxButton.OK,
      System.Windows.MessageBoxImage.Error);
             }
         }
 
-        private async void WriteValueToNode()
-      {
-         if (!CanWrite || string.IsNullOrWhiteSpace(WriteValue))
-  return;
-
-      try
- {
-             // Try to parse the value based on data type
-  object valueToWrite = ParseValue(WriteValue, SelectedNode.DataType);
-
-       var success = await _opcClientService.WriteValueAsync(SelectedNode.NodeId, valueToWrite);
-         
-         if (success)
-      {
-     System.Windows.MessageBox.Show(
-          $"Successfully wrote value '{WriteValue}' to {SelectedNode.DisplayName}",
- "Write Success",
-      System.Windows.MessageBoxButton.OK,
-              System.Windows.MessageBoxImage.Information);
-
-        // Re-read to confirm
-        ReadValue();
-   WriteValue = string.Empty;
-         }
-        else
-         {
-    System.Windows.MessageBox.Show(
-     $"Failed to write value to {SelectedNode.DisplayName}",
-                 "Write Failed",
-        System.Windows.MessageBoxButton.OK,
-   System.Windows.MessageBoxImage.Warning);
-              }
-          }
-            catch (Exception ex)
-            {
-       System.Diagnostics.Debug.WriteLine($"Error writing value: {ex.Message}");
-        System.Windows.MessageBox.Show(
-    $"Failed to write value: {ex.Message}",
-      "Write Error",
-           System.Windows.MessageBoxButton.OK,
-    System.Windows.MessageBoxImage.Error);
-    }
-        }
-
-  private object ParseValue(string value, string dataType)
+        private object ParseValue(string value, string dataType)
         {
-    // Simple parsing - can be enhanced based on OPC UA data types
             if (string.IsNullOrWhiteSpace(dataType))
-   return value;
+    return value;
 
-        try
-        {
-    if (dataType.Contains("Boolean", StringComparison.OrdinalIgnoreCase))
-    return bool.Parse(value);
-            else if (dataType.Contains("Int32", StringComparison.OrdinalIgnoreCase))
- return int.Parse(value);
-    else if (dataType.Contains("Int16", StringComparison.OrdinalIgnoreCase))
-            return short.Parse(value);
-     else if (dataType.Contains("Int64", StringComparison.OrdinalIgnoreCase))
-          return long.Parse(value);
-             else if (dataType.Contains("Float", StringComparison.OrdinalIgnoreCase))
- return float.Parse(value);
-     else if (dataType.Contains("Double", StringComparison.OrdinalIgnoreCase))
-    return double.Parse(value);
-  else if (dataType.Contains("UInt32", StringComparison.OrdinalIgnoreCase))
-        return uint.Parse(value);
-         else if (dataType.Contains("UInt16", StringComparison.OrdinalIgnoreCase))
-             return ushort.Parse(value);
- else if (dataType.Contains("Byte", StringComparison.OrdinalIgnoreCase))
-    return byte.Parse(value);
- else
-        return value; // Default to string
-}
-   catch
-         {
-     return value; // Fallback to string
-            }
-        }
-
-        private async void MonitorNode()
-        {
-            if (!CanMonitor || IsNodeMonitored(SelectedNode))
-       return;
-
-   try
+         try
             {
-    // Ensure subscription exists
-    if (!IsMonitoring)
-                {
-    await _opcClientService.CreateSubscriptionAsync(1000);
-IsMonitoring = true;
-      }
-
-                // Add monitored item
-         _opcClientService.AddMonitoredItem(SelectedNode.NodeId, (item, e) =>
-                {
-  // Update value on notification
-     if (e.NotificationValue is MonitoredItemNotification notification)
-               {
-          System.Windows.Application.Current.Dispatcher.Invoke(() =>
- {
-      var monitoredNode = MonitoredNodes.FirstOrDefault(n => n.NodeId == SelectedNode.NodeId);
-            if (monitoredNode != null)
-        {
-               monitoredNode.Value = notification.Value.Value;
-monitoredNode.Timestamp = notification.Value.SourceTimestamp;
-        monitoredNode.Quality = notification.Value.StatusCode.ToString();
-         }
-
-          // Also update selected node if it's the same
-       if (SelectedNode?.NodeId == item.StartNodeId.ToString())
-   {
-       SelectedNode.Value = notification.Value.Value;
-            SelectedNode.Timestamp = notification.Value.SourceTimestamp;
-              SelectedNode.Quality = notification.Value.StatusCode.ToString();
-            OnPropertyChanged(nameof(SelectedNode));
+                if (dataType.Contains("Boolean", StringComparison.OrdinalIgnoreCase))
+        return bool.Parse(value);
+      else if (dataType.Contains("Int32", StringComparison.OrdinalIgnoreCase))
+        return int.Parse(value);
+       else if (dataType.Contains("Int16", StringComparison.OrdinalIgnoreCase))
+      return short.Parse(value);
+  else if (dataType.Contains("Int64", StringComparison.OrdinalIgnoreCase))
+    return long.Parse(value);
+   else if (dataType.Contains("Float", StringComparison.OrdinalIgnoreCase))
+           return float.Parse(value);
+              else if (dataType.Contains("Double", StringComparison.OrdinalIgnoreCase))
+         return double.Parse(value);
+                else if (dataType.Contains("UInt32", StringComparison.OrdinalIgnoreCase))
+        return uint.Parse(value);
+    else if (dataType.Contains("UInt16", StringComparison.OrdinalIgnoreCase))
+              return ushort.Parse(value);
+   else if (dataType.Contains("Byte", StringComparison.OrdinalIgnoreCase))
+        return byte.Parse(value);
+       else
+          return value;
+ }
+            catch
+            {
+           return value;
      }
-             });
-         }
-   });
+        }
 
-             // Add to monitored list
-    var nodeToMonitor = new OpcNodeInfo
+     private void CopyNodeId()
+        {
+    if (SelectedTag != null)
           {
-         NodeId = SelectedNode.NodeId,
-              DisplayName = SelectedNode.DisplayName,
-     BrowseName = SelectedNode.BrowseName,
-    NodeClass = SelectedNode.NodeClass,
-         DataType = SelectedNode.DataType,
-        Value = SelectedNode.Value,
-          Timestamp = SelectedNode.Timestamp,
-     Quality = SelectedNode.Quality
-         };
-
-    MonitoredNodes.Add(nodeToMonitor);
-
-          System.Diagnostics.Debug.WriteLine($"Started monitoring {SelectedNode.DisplayName}");
+   System.Windows.Clipboard.SetText(SelectedTag.NodeId);
+        System.Diagnostics.Debug.WriteLine($"Copied NodeId: {SelectedTag.NodeId}");
        }
-            catch (Exception ex)
-        {
-           System.Diagnostics.Debug.WriteLine($"Error monitoring node: {ex.Message}");
-       System.Windows.MessageBox.Show(
-                    $"Failed to monitor node: {ex.Message}",
-             "Monitor Error",
-  System.Windows.MessageBoxButton.OK,
-  System.Windows.MessageBoxImage.Error);
-       }
-        }
-
-        private void UnmonitorNode()
-        {
-     if (SelectedNode == null)
-       return;
-
-         var monitoredNode = MonitoredNodes.FirstOrDefault(n => n.NodeId == SelectedNode.NodeId);
-            if (monitoredNode != null)
-         {
-          MonitoredNodes.Remove(monitoredNode);
-                System.Diagnostics.Debug.WriteLine($"Stopped monitoring {SelectedNode.DisplayName}");
-
-    // If no more monitored nodes, remove all from subscription
-     if (MonitoredNodes.Count == 0)
-           {
-   _opcClientService.RemoveAllMonitoredItems();
-           IsMonitoring = false;
-         }
-         }
-        }
-
-        private void ClearMonitored()
-        {
-            MonitoredNodes.Clear();
-    _opcClientService.RemoveAllMonitoredItems();
-   IsMonitoring = false;
-    }
-
- private bool IsNodeMonitored(OpcNodeInfo node)
-        {
-    return node != null && MonitoredNodes.Any(n => n.NodeId == node.NodeId);
-     }
-
-        private void CopyNodeId()
-  {
-            if (SelectedNode != null)
-   {
-            System.Windows.Clipboard.SetText(SelectedNode.NodeId);
-System.Diagnostics.Debug.WriteLine($"Copied NodeId: {SelectedNode.NodeId}");
-   }
-    }
-
-        private void Search()
-        {
-       // TODO: Implement search functionality
-   System.Windows.MessageBox.Show(
-                "Search functionality coming soon!",
-       "Search",
-       System.Windows.MessageBoxButton.OK,
-          System.Windows.MessageBoxImage.Information);
         }
     }
 }
