@@ -39,11 +39,10 @@
 
       <!-- App Title -->
     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-     <TextBlock Text="📊" FontSize="24" Foreground="{StaticResource AccentBrush}" 
-      VerticalAlignment="Center" Margin="0,0,12,0"/>
+     <Image Source="pack://application:,,,/Resources/Icons/logo.png" Width="24" Height="24" Margin="0,0,12,0" RenderOptions.BitmapScalingMode="HighQuality"/>
 <TextBlock Text="UAInspector" FontSize="18" FontWeight="SemiBold"
       Foreground="{StaticResource TextPrimaryBrush}"
-      VerticalAlignment="Center"/>
+   VerticalAlignment="Center"/>
  </StackPanel>
 
    <!-- Navigation Buttons -->
