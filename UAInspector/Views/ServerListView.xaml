@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="UAInspector.Views.ServerListView"
+<UserControl x:Class="UAInspector.Views.ServerListView"
      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -6,30 +6,30 @@
   mc:Ignorable="d" 
        d:DesignHeight="600" d:DesignWidth="1000">
  
- <Grid Background="{StaticResource BackgroundBrush}">
+ <Grid Background="{DynamicResource BackgroundBrush}">
      <Grid.RowDefinitions>
     <RowDefinition Height="Auto"/>
-  <RowDefinition Height="*"/>
+<RowDefinition Height="*"/>
   </Grid.RowDefinitions>
 
  <!-- Header -->
-<Border Grid.Row="0" Background="{StaticResource SurfaceBrush}" 
-  BorderBrush="{StaticResource BorderBrush}"
+<Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}" 
+  BorderBrush="{DynamicResource BorderBrush}"
   BorderThickness="0,0,0,1" Padding="24,20">
          <Grid>
           <Grid.ColumnDefinitions>
   <ColumnDefinition Width="*"/>
            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-                
+       
      <!-- Title Section -->
-        <StackPanel Grid.Column="0">
+    <StackPanel Grid.Column="0">
   <TextBlock Text="OPC UA Server Connection" 
- Style="{StaticResource HeaderText}"
+ Style="{DynamicResource HeaderText}"
        Margin="0,0,0,4"/>
    
    <!-- Connection Status Banner -->
-      <Border Background="{StaticResource SuccessBrush}"
+      <Border Background="{DynamicResource SuccessBrush}"
     CornerRadius="6"
     Padding="12,6"
       Margin="0,8,0,0"
@@ -47,31 +47,31 @@
   </Border.Style>
   <StackPanel Orientation="Horizontal">
          <TextBlock Text="●" FontSize="14" 
-           Foreground="White"
+    Foreground="White"
         VerticalAlignment="Center" 
-          Margin="0,0,8,0"/>
+   Margin="0,0,8,0"/>
       <TextBlock VerticalAlignment="Center"
       Foreground="White"
    FontSize="13"
-                FontWeight="Medium">
+       FontWeight="Medium">
        <Run Text="Connected to:"/>
   <Run Text="{Binding ConnectedServer.Name, Mode=OneWay}" FontWeight="Bold"/>
   </TextBlock>
        </StackPanel>
  </Border>
     </StackPanel>
-           
+  
   <!-- Quick Actions -->
    <StackPanel Grid.Column="1" 
-        Orientation="Horizontal" 
+     Orientation="Horizontal" 
    VerticalAlignment="Top">
            <Button Content="🔄 Refresh" 
          Command="{Binding RefreshCommand}"
-   Style="{StaticResource SecondaryButton}"
+   Style="{DynamicResource SecondaryButton}"
           Padding="16,10"
-       Margin="0,0,8,0"
-           ToolTip="Refresh server list"/>
-             </StackPanel>
+    Margin="0,0,8,0"
+         ToolTip="Refresh server list"/>
+      </StackPanel>
        </Grid>
    </Border>
 
@@ -85,7 +85,7 @@
 
      <!-- Left Panel: Saved Servers -->
  <Border Grid.Column="0" 
-        Style="{StaticResource Card}"
+     Style="{DynamicResource Card}"
        Padding="20">
   <Grid>
    <Grid.RowDefinitions>
@@ -97,55 +97,55 @@
 
  <!-- Title -->
       <StackPanel Grid.Row="0" 
-   Orientation="Horizontal" 
+ Orientation="Horizontal" 
     Margin="0,0,0,16">
      <TextBlock Text="🖥️" 
-         FontSize="20" 
+      FontSize="20" 
  VerticalAlignment="Center" 
            Margin="0,0,10,0"/>
    <TextBlock Text="Saved Servers" 
       FontSize="18" 
-                 FontWeight="SemiBold"
-          Foreground="{StaticResource TextPrimaryBrush}"
+        FontWeight="SemiBold"
+          Foreground="{DynamicResource TextPrimaryBrush}"
           VerticalAlignment="Center"/>
-       <Border Background="{StaticResource AccentBrush}"
-       CornerRadius="10"
+       <Border Background="{DynamicResource AccentBrush}"
+   CornerRadius="10"
         Padding="8,2"
     Margin="12,0,0,0"
   VerticalAlignment="Center">
    <TextBlock Text="{Binding Servers.Count, StringFormat='{}{0}'}" 
       FontSize="12"
     FontWeight="Bold"
-                 Foreground="White"/>
+  Foreground="White"/>
   </Border>
     </StackPanel>
 
        <!-- Manual Entry -->
      <Border Grid.Row="1" 
-  Background="{StaticResource SurfaceBrush}"
-  BorderBrush="{StaticResource BorderBrush}"
+  Background="{DynamicResource SurfaceBrush}"
+  BorderBrush="{DynamicResource BorderBrush}"
     BorderThickness="1"
-           CornerRadius="8"
-              Padding="16,12"
+   CornerRadius="8"
+   Padding="16,12"
   Margin="0,0,0,16">
     <Grid>
     <Grid.ColumnDefinitions>
 <ColumnDefinition Width="Auto"/>
-         <ColumnDefinition Width="*"/>
+   <ColumnDefinition Width="*"/>
      <ColumnDefinition Width="Auto"/>
-    </Grid.ColumnDefinitions>
+  </Grid.ColumnDefinitions>
    
-         <TextBlock Grid.Column="0"
+     <TextBlock Grid.Column="0"
          Text="🔗" 
-          FontSize="20"
-             VerticalAlignment="Center"
+      FontSize="20"
+      VerticalAlignment="Center"
    Margin="0,0,12,0"/>
    
  <TextBox Grid.Column="1" 
-       Text="{Binding ManualUrl, UpdateSourceTrigger=PropertyChanged}"
-    Style="{StaticResource ModernTextBox}"
+ Text="{Binding ManualUrl, UpdateSourceTrigger=PropertyChanged}"
+    Style="{DynamicResource ModernTextBox}"
     Margin="0,0,12,0"
-         FontSize="13"
+      FontSize="13"
    IsEnabled="{Binding IsConnected, Converter={StaticResource InverseBooleanConverter}}"
      ToolTip="Enter OPC UA server URL (e.g., opc.tcp://localhost:4840)">
   <TextBox.InputBindings>
@@ -156,8 +156,8 @@
    <Button Grid.Column="2" 
       Content="➕ Add"
   Command="{Binding AddManualCommand}"
-    Style="{StaticResource ModernButton}"
-            FontSize="13"
+    Style="{DynamicResource ModernButton}"
+         FontSize="13"
  Padding="20,10"/>
 </Grid>
    </Border>
@@ -165,36 +165,36 @@
      <!-- Server List -->
     <ScrollViewer Grid.Row="2" 
    VerticalScrollBarVisibility="Auto"
-              HorizontalScrollBarVisibility="Disabled">
+     HorizontalScrollBarVisibility="Disabled">
      <ItemsControl ItemsSource="{Binding Servers}">
-        <ItemsControl.ItemTemplate>
-             <DataTemplate>
-  <Border Background="{StaticResource SurfaceBrush}"
- BorderBrush="{StaticResource BorderBrush}"
+   <ItemsControl.ItemTemplate>
+         <DataTemplate>
+  <Border Background="{DynamicResource SurfaceBrush}"
+ BorderBrush="{DynamicResource BorderBrush}"
      BorderThickness="1"
      CornerRadius="8"
-          Margin="0,0,0,12"
+       Margin="0,0,0,12"
   Padding="16"
      Cursor="Hand">
    <Border.Style>
       <Style TargetType="Border">
-          <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}"/>
+          <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
              <Style.Triggers>
           <Trigger Property="IsMouseOver" Value="True">
-               <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}"/>
+   <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
      <Setter Property="Background" Value="#2A2A2D"/>
          </Trigger>
-       </Style.Triggers>
+    </Style.Triggers>
       </Style>
    </Border.Style>
-           
+       
              <Border.InputBindings>
     <MouseBinding Gesture="LeftClick" 
       Command="{Binding DataContext.ConnectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
      CommandParameter="{Binding}"/>
        <MouseBinding Gesture="LeftDoubleClick" 
-             Command="{Binding DataContext.ConnectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-           CommandParameter="{Binding}"/>
+      Command="{Binding DataContext.ConnectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+   CommandParameter="{Binding}"/>
   </Border.InputBindings>
       
        <Grid>
@@ -207,98 +207,98 @@
            
   <!-- Header Row -->
 <Grid Grid.Row="0">
-    <Grid.ColumnDefinitions>
+  <Grid.ColumnDefinitions>
      <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
+      <ColumnDefinition Width="Auto"/>
   </Grid.ColumnDefinitions>
      
      <TextBlock Grid.Column="0"
-              Text="{Binding Name}" 
+    Text="{Binding Name}" 
       FontSize="16" 
       FontWeight="SemiBold"
-              Foreground="{StaticResource TextPrimaryBrush}"/>
+              Foreground="{DynamicResource TextPrimaryBrush}"/>
           
-   <Button Grid.Column="1"
+ <Button Grid.Column="1"
 Content="🗑️"
-         Command="{Binding DataContext.DeleteServerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+ Command="{Binding DataContext.DeleteServerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
  CommandParameter="{Binding}"
-      Style="{StaticResource SecondaryButton}"
-        Padding="8,4"
-                FontSize="12"
-         ToolTip="Delete server"
+      Style="{DynamicResource SecondaryButton}"
+ Padding="8,4"
+    FontSize="12"
+    ToolTip="Delete server"
      Opacity="0.7"/>
      </Grid>
           
         <!-- URL -->
-       <TextBlock Grid.Row="1" 
+ <TextBlock Grid.Row="1" 
           Text="{Binding Url}" 
       FontSize="13"
-          FontFamily="Consolas"
-        Foreground="{StaticResource AccentBrush}"
+    FontFamily="Consolas"
+        Foreground="{DynamicResource AccentBrush}"
   Margin="0,6,0,0"/>
    
-               <!-- Info Row -->
+             <!-- Info Row -->
       <Grid Grid.Row="2" Margin="0,8,0,0">
      <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-          
-             <StackPanel Grid.Column="0" 
+    
+     <StackPanel Grid.Column="0" 
          Orientation="Horizontal">
  <!-- Security Badge -->
-        <Border Background="#2D2D30"
-     BorderBrush="{StaticResource BorderBrush}"
+     <Border Background="#2D2D30"
+     BorderBrush="{DynamicResource BorderBrush}"
        BorderThickness="1"
      CornerRadius="4"
         Padding="8,4"
-                  Margin="0,0,8,0">
-  <StackPanel Orientation="Horizontal">
+   Margin="0,0,8,0">
+<StackPanel Orientation="Horizontal">
         <TextBlock Text="🔒" 
     FontSize="11" 
  VerticalAlignment="Center"
     Margin="0,0,4,0"/>
             <TextBlock Text="{Binding SecurityMode}" 
  FontSize="11"
- Foreground="{StaticResource TextSecondaryBrush}"
+ Foreground="{DynamicResource TextSecondaryBrush}"
      VerticalAlignment="Center"/>
      </StackPanel>
        </Border>
    
-            <!-- Login Type Badge -->
+          <!-- Login Type Badge -->
           <Border Background="#2D2D30"
- BorderBrush="{StaticResource BorderBrush}"
-                 BorderThickness="1"
+ BorderBrush="{DynamicResource BorderBrush}"
+ BorderThickness="1"
    CornerRadius="4"
          Padding="8,4">
   <StackPanel Orientation="Horizontal">
               <TextBlock Text="👤" 
-               FontSize="11" 
+       FontSize="11" 
     VerticalAlignment="Center"
-             Margin="0,0,4,0"/>
-                    <TextBlock Text="{Binding LastLoginType}" 
+      Margin="0,0,4,0"/>
+          <TextBlock Text="{Binding LastLoginType}" 
   FontSize="11"
-     Foreground="{StaticResource TextSecondaryBrush}"
+     Foreground="{DynamicResource TextSecondaryBrush}"
  VerticalAlignment="Center"/>
         </StackPanel>
-           </Border>
-           </StackPanel>
-                  </Grid>
+      </Border>
+    </StackPanel>
+        </Grid>
        
  <!-- Last Connected -->
-                <TextBlock Grid.Row="3" 
+       <TextBlock Grid.Row="3" 
     FontSize="11"
-      Foreground="{StaticResource TextSecondaryBrush}"
+      Foreground="{DynamicResource TextSecondaryBrush}"
         Margin="0,8,0,0">
         <Run Text="Last connected:"/>
-        <Run Text="{Binding LastConnected, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}"/>
+    <Run Text="{Binding LastConnected, StringFormat='{}{0:dd/MM/yyyy HH:mm}'}"/>
       </TextBlock>
-           </Grid>
-         </Border>
+       </Grid>
+    </Border>
       </DataTemplate>
       </ItemsControl.ItemTemplate>
               </ItemsControl>
-         </ScrollViewer>
+       </ScrollViewer>
 
    <!-- Action Buttons -->
  <Grid Grid.Row="3" Margin="0,16,0,0">
@@ -307,21 +307,21 @@ Content="🗑️"
 <ColumnDefinition Width="Auto"/>
  </Grid.ColumnDefinitions>
      
-       <!-- Connect Button -->
+    <!-- Connect Button -->
    <Button Grid.Column="1"
 Content="🔌 Connect to Selected" 
       Command="{Binding ConnectCommand}"
-         Padding="24,12"
+       Padding="24,12"
   FontSize="14"
   FontWeight="SemiBold">
-   <Button.Style>
+ <Button.Style>
        <Style TargetType="Button" BasedOn="{StaticResource ModernButton}">
      <Style.Triggers>
             <DataTrigger Binding="{Binding IsConnected}" Value="True">
       <Setter Property="Visibility" Value="Collapsed"/>
   </DataTrigger>
 </Style.Triggers>
-    </Style>
+ </Style>
    </Button.Style>
      </Button>
         
@@ -335,7 +335,7 @@ Content="🔌 Connect to Selected"
    <Button.Style>
     <Style TargetType="Button" BasedOn="{StaticResource ModernButton}">
 <Setter Property="Visibility" Value="Collapsed"/>
- <Setter Property="Background" Value="{StaticResource ErrorBrush}"/>
+ <Setter Property="Background" Value="{DynamicResource ErrorBrush}"/>
 <Style.Triggers>
        <DataTrigger Binding="{Binding IsConnected}" Value="True">
  <Setter Property="Visibility" Value="Visible"/>
@@ -353,7 +353,7 @@ Content="🔌 Connect to Selected"
 
       <!-- Right Panel: Server Discovery -->
     <Border Grid.Column="2" 
-   Style="{StaticResource Card}"
+   Style="{DynamicResource Card}"
    Padding="20">
   <Grid>
      <Grid.RowDefinitions>
@@ -368,22 +368,22 @@ Content="🔌 Connect to Selected"
       Orientation="Horizontal" 
            Margin="0,0,0,16">
         <TextBlock Text="🔍" 
-             FontSize="20" 
-             VerticalAlignment="Center" 
+      FontSize="20" 
+   VerticalAlignment="Center" 
          Margin="0,0,10,0"/>
   <TextBlock Text="Discover Servers" 
-              FontSize="18" 
+          FontSize="18" 
       FontWeight="SemiBold"
-          Foreground="{StaticResource TextPrimaryBrush}"
-              VerticalAlignment="Center"/>
-           </StackPanel>
+   Foreground="{DynamicResource TextPrimaryBrush}"
+  VerticalAlignment="Center"/>
+ </StackPanel>
 
   <!-- Discovery Button -->
  <Button Grid.Row="1" 
     Command="{Binding DiscoverServersCommand}"
       HorizontalAlignment="Stretch"
   Margin="0,0,0,16" 
-               Padding="0,14"
+ Padding="0,14"
       FontSize="14"
           FontWeight="Medium">
 <Button.Style>
@@ -401,17 +401,17 @@ Content="🔌 Connect to Selected"
 
     <!-- Discovery Status -->
   <Border Grid.Row="2"
-        Background="{StaticResource SurfaceBrush}"
-             BorderBrush="{StaticResource AccentBrush}"
+  Background="{DynamicResource SurfaceBrush}"
+             BorderBrush="{DynamicResource AccentBrush}"
       BorderThickness="1"
       CornerRadius="6"
-              Padding="12,8"
+           Padding="12,8"
       Margin="0,0,0,16">
-       <Border.Style>
+   <Border.Style>
         <Style TargetType="Border">
          <Setter Property="Visibility" Value="Collapsed"/>
             <Style.Triggers>
-            <DataTrigger Binding="{Binding IsDiscovering}" Value="True">
+        <DataTrigger Binding="{Binding IsDiscovering}" Value="True">
  <Setter Property="Visibility" Value="Visible"/>
          </DataTrigger>
      </Style.Triggers>
@@ -419,48 +419,48 @@ Content="🔌 Connect to Selected"
  </Border.Style>
     <StackPanel Orientation="Horizontal">
      <TextBlock Text="⏳" 
-       FontSize="14" 
+ FontSize="14" 
    VerticalAlignment="Center"
-             Margin="0,0,8,0"/>
+          Margin="0,0,8,0"/>
    <TextBlock Text="{Binding DiscoveryStatus}"
      FontSize="12"
-          Foreground="{StaticResource TextPrimaryBrush}"
+   Foreground="{DynamicResource TextPrimaryBrush}"
   VerticalAlignment="Center"
   TextWrapping="Wrap"/>
-           </StackPanel>
+  </StackPanel>
     </Border>
 
 <!-- Discovered Servers List -->
    <ScrollViewer Grid.Row="3" 
-                VerticalScrollBarVisibility="Auto"
+         VerticalScrollBarVisibility="Auto"
           HorizontalScrollBarVisibility="Disabled">
     <ItemsControl ItemsSource="{Binding DiscoveredServers}">
   <ItemsControl.ItemTemplate>
         <DataTemplate>
-     <Border Background="{StaticResource SurfaceBrush}"
-  BorderBrush="{StaticResource BorderBrush}"
+   <Border Background="{DynamicResource SurfaceBrush}"
+  BorderBrush="{DynamicResource BorderBrush}"
          BorderThickness="1"
    CornerRadius="6"
      Margin="0,0,0,10"
            Padding="12"
         Cursor="Hand">
-         <Border.Style>
+    <Border.Style>
         <Style TargetType="Border">
-              <Style.Triggers>
+         <Style.Triggers>
        <Trigger Property="IsMouseOver" Value="True">
-  <Setter Property="BorderBrush" Value="{StaticResource SuccessBrush}"/>
+  <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}"/>
    <Setter Property="Background" Value="#2A2A2D"/>
    </Trigger>
     </Style.Triggers>
     </Style>
-           </Border.Style>
+   </Border.Style>
           
-            <Border.InputBindings>
+   <Border.InputBindings>
            <MouseBinding Gesture="LeftDoubleClick" 
   Command="{Binding DataContext.ConnectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
   CommandParameter="{Binding}"/>
                 </Border.InputBindings>
-        <Grid>
+     <Grid>
      <Grid.RowDefinitions>
     <RowDefinition Height="Auto"/>
  <RowDefinition Height="Auto"/>
@@ -468,7 +468,7 @@ Content="🔌 Connect to Selected"
  </Grid.RowDefinitions>
          
         <StackPanel Grid.Row="0" 
-        Orientation="Horizontal"
+    Orientation="Horizontal"
          Margin="0,0,0,6">
          <TextBlock Text="🆕" 
  FontSize="12"
@@ -477,29 +477,29 @@ Content="🔌 Connect to Selected"
     
       <TextBlock Text="{Binding Name}" 
    FontSize="14" FontWeight="Medium"
-   Foreground="{StaticResource TextPrimaryBrush}"
+   Foreground="{DynamicResource TextPrimaryBrush}"
     VerticalAlignment="Center"/>
      </StackPanel>
 
      <TextBlock Grid.Row="1" 
-          Text="{Binding Url}" 
+ Text="{Binding Url}" 
 FontSize="11"
   FontFamily="Consolas"
-       Foreground="{StaticResource TextSecondaryBrush}"
+  Foreground="{DynamicResource TextSecondaryBrush}"
 Margin="0,0,0,6"
        TextWrapping="Wrap"/>
      
   <Border Grid.Row="2"
       Background="#2D2D30"
-        CornerRadius="3"
-              Padding="6,3"
+     CornerRadius="3"
+    Padding="6,3"
      HorizontalAlignment="Left">
      <TextBlock FontSize="10"
-   Foreground="{StaticResource AccentBrush}">
+   Foreground="{DynamicResource AccentBrush}">
  <Run Text="🔒"/>
       <Run Text="{Binding SecurityMode}"/>
  </TextBlock>
-          </Border>
+      </Border>
   </Grid>
       </Border>
    </DataTemplate>

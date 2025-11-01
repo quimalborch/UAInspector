@@ -9,144 +9,144 @@
     mc:Ignorable="d"
         Title="UAInspector - OPC UA Client" Height="700" Width="1200"
    WindowStartupLocation="CenterScreen"
-        Background="{StaticResource BackgroundBrush}">
+        Background="{DynamicResource BackgroundBrush}">
     
-<Window.Resources>
+    <Window.Resources>
         <ResourceDictionary>
-<ResourceDictionary.MergedDictionaries>
-          <ResourceDictionary Source="Resources/Styles.xaml"/>
-       </ResourceDictionary.MergedDictionaries>
-    </ResourceDictionary>
- </Window.Resources>
+      <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/Styles.xaml"/>
+    </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
 
     <Grid>
-        <Grid.RowDefinitions>
-        <RowDefinition Height="Auto"/>
-   <RowDefinition Height="*"/>
-    <RowDefinition Height="Auto"/>
-    </Grid.RowDefinitions>
+   <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+       <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-  <!-- Top Navigation Bar -->
-        <Border Grid.Row="0" Background="{StaticResource SurfaceBrush}" 
-     BorderBrush="{StaticResource BorderBrush}"
-           BorderThickness="0,0,0,1">
-         <Grid Height="56" Margin="16,0">
-<Grid.ColumnDefinitions>
-    <ColumnDefinition Width="Auto"/>
-        <ColumnDefinition Width="*"/>
-          <ColumnDefinition Width="Auto"/>
-             </Grid.ColumnDefinitions>
+      <!-- Top Navigation Bar -->
+        <Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}" 
+      BorderBrush="{DynamicResource BorderBrush}"
+     BorderThickness="0,0,0,1">
+            <Grid Height="56" Margin="16,0">
+        <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+   <ColumnDefinition Width="*"/>
+      <ColumnDefinition Width="Auto"/>
+   </Grid.ColumnDefinitions>
 
-      <!-- App Title -->
-    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-     <Image Source="pack://application:,,,/Resources/Icons/logo.png" Width="24" Height="24" Margin="0,0,12,0" RenderOptions.BitmapScalingMode="HighQuality"/>
-<TextBlock Text="UAInspector" FontSize="18" FontWeight="SemiBold"
-      Foreground="{StaticResource TextPrimaryBrush}"
-   VerticalAlignment="Center"/>
- </StackPanel>
+        <!-- App Title -->
+     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                <Image Source="pack://application:,,,/Resources/Icons/logo.png" Width="24" Height="24" Margin="0,0,12,0" RenderOptions.BitmapScalingMode="HighQuality"/>
+    <TextBlock Text="UAInspector" FontSize="18" FontWeight="SemiBold"
+         Foreground="{DynamicResource TextPrimaryBrush}"
+            VerticalAlignment="Center"/>
+        </StackPanel>
 
-   <!-- Navigation Buttons -->
-      <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                <!-- Navigation Buttons -->
+        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
   <Button Content="🏠 Servers" 
-   Command="{Binding ShowServerListCommand}"
-      Style="{StaticResource SecondaryButton}"
-    Margin="0,0,8,0" Padding="16,8"/>
+     Command="{Binding ShowServerListCommand}"
+    Style="{StaticResource SecondaryButton}"
+     Margin="0,0,8,0" Padding="16,8"/>
           <Button Content="🔍 Explorer" 
-  Command="{Binding ShowExplorerCommand}"
-    Margin="0,0,8,0" Padding="16,8"
-     ToolTip="Browse OPC UA address space (requires connection)">
-   <Button.Style>
-       <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
- <Style.Triggers>
-      <DataTrigger Binding="{Binding IsConnected}" Value="False">
-   <Setter Property="Opacity" Value="0.5"/>
-  <Setter Property="Cursor" Value="No"/>
-              </DataTrigger>
-            </Style.Triggers>
-    </Style>
-        </Button.Style>
-          </Button>
+      Command="{Binding ShowExplorerCommand}"
+           Margin="0,0,8,0" Padding="16,8"
+ ToolTip="Browse OPC UA address space (requires connection)">
+    <Button.Style>
+     <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+           <Style.Triggers>
+  <DataTrigger Binding="{Binding IsConnected}" Value="False">
+           <Setter Property="Opacity" Value="0.5"/>
+        <Setter Property="Cursor" Value="No"/>
+         </DataTrigger>
+   </Style.Triggers>
+     </Style>
+      </Button.Style>
+      </Button>
  <Button Content="⚙ Settings" 
            Command="{Binding ShowSettingsCommand}"
-       Style="{StaticResource SecondaryButton}"
-           Margin="0,0,8,0" Padding="16,8"/>
+  Style="{StaticResource SecondaryButton}"
+ Margin="0,0,8,0" Padding="16,8"/>
 
-          <!-- Update Now Button (only visible when update is available) -->
+      <!-- Update Now Button (only visible when update is available) -->
        <Button Content="🔄 Update Now" 
                 Command="{Binding ApplyUpdateCommand}"
-            Padding="16,8"
-     ToolTip="A new update is available. Click to download and install.">
-     <Button.Style>
-        <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
-   <Setter Property="Visibility" Value="Collapsed"/>
-  <Setter Property="BorderBrush" Value="#FFD700"/>
+  Padding="16,8"
+  ToolTip="A new update is available. Click to download and install.">
+           <Button.Style>
+       <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+     <Setter Property="Visibility" Value="Collapsed"/>
+           <Setter Property="BorderBrush" Value="#FFD700"/>
   <Setter Property="BorderThickness" Value="2"/>
-     <Setter Property="Background" Value="#33FFD700"/>
-     <Style.Triggers>
-          <DataTrigger Binding="{Binding IsUpdateAvailable}" Value="True">
-  <Setter Property="Visibility" Value="Visible"/>
- </DataTrigger>
-        </Style.Triggers>
-         </Style>
-         </Button.Style>
- </Button>
- </StackPanel>
-      </Grid>
-    </Border>
+      <Setter Property="Background" Value="#33FFD700"/>
+         <Style.Triggers>
+    <DataTrigger Binding="{Binding IsUpdateAvailable}" Value="True">
+      <Setter Property="Visibility" Value="Visible"/>
+        </DataTrigger>
+      </Style.Triggers>
+      </Style>
+      </Button.Style>
+         </Button>
+           </StackPanel>
+     </Grid>
+        </Border>
 
-        <!-- Main Content Area -->
-     <ContentControl Grid.Row="1" Content="{Binding CurrentViewModel}">
- <ContentControl.Resources>
-      <DataTemplate DataType="{x:Type vm:ServerListViewModel}">
-         <views:ServerListView/>
-      </DataTemplate>
-       <DataTemplate DataType="{x:Type vm:ExplorerViewModel}">
-    <views:ExplorerView/>
-      </DataTemplate>
-            <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
-    <views:SettingsView/>
+   <!-- Main Content Area -->
+        <ContentControl Grid.Row="1" Content="{Binding CurrentViewModel}">
+            <ContentControl.Resources>
+     <DataTemplate DataType="{x:Type vm:ServerListViewModel}">
+      <views:ServerListView/>
          </DataTemplate>
-   </ContentControl.Resources>
+   <DataTemplate DataType="{x:Type vm:ExplorerViewModel}">
+         <views:ExplorerView/>
+     </DataTemplate>
+   <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+       <views:SettingsView/>
+          </DataTemplate>
+            </ContentControl.Resources>
     </ContentControl>
 
         <!-- Status Bar -->
-  <Border Grid.Row="2" Background="{StaticResource SurfaceBrush}"
-    BorderBrush="{StaticResource BorderBrush}"
-    BorderThickness="0,1,0,0">
- <Grid Height="32" Margin="16,0">
-     <Grid.ColumnDefinitions>
+        <Border Grid.Row="2" Background="{DynamicResource SurfaceBrush}"
+         BorderBrush="{DynamicResource BorderBrush}"
+       BorderThickness="0,1,0,0">
+          <Grid Height="32" Margin="16,0">
+      <Grid.ColumnDefinitions>
    <ColumnDefinition Width="Auto"/>
-         <ColumnDefinition Width="*"/>
-   <ColumnDefinition Width="Auto"/>
-       </Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+           <ColumnDefinition Width="Auto"/>
+     </Grid.ColumnDefinitions>
 
-  <!-- Connection Status -->
-          <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-       <Ellipse Width="10" Height="10" Margin="0,0,8,0">
-<Ellipse.Style>
- <Style TargetType="Ellipse">
-      <Setter Property="Fill" Value="{StaticResource ErrorBrush}"/>
-    <Style.Triggers>
-   <DataTrigger Binding="{Binding IsConnected}" Value="True">
-    <Setter Property="Fill" Value="{StaticResource SuccessBrush}"/>
-    </DataTrigger>
- </Style.Triggers>
-         </Style>
-</Ellipse.Style>
-  </Ellipse>
-  <TextBlock Text="{Binding StatusMessage}" 
- Foreground="{StaticResource TextSecondaryBrush}"
-      FontSize="12"/>
-     </StackPanel>
+             <!-- Connection Status -->
+    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+          <Ellipse Width="10" Height="10" Margin="0,0,8,0">
+     <Ellipse.Style>
+           <Style TargetType="Ellipse">
+             <Setter Property="Fill" Value="{DynamicResource ErrorBrush}"/>
+              <Style.Triggers>
+  <DataTrigger Binding="{Binding IsConnected}" Value="True">
+       <Setter Property="Fill" Value="{DynamicResource SuccessBrush}"/>
+        </DataTrigger>
+       </Style.Triggers>
+                   </Style>
+    </Ellipse.Style>
+          </Ellipse>
+             <TextBlock Text="{Binding StatusMessage}" 
+  Foreground="{DynamicResource TextSecondaryBrush}"
+ FontSize="12"/>
+      </StackPanel>
 
-    <!-- App Version -->
-     <TextBlock Grid.Column="2" 
-           Text="{Binding AppVersion}"
-       Foreground="{StaticResource TextSecondaryBrush}"
-      FontSize="11" 
-           VerticalAlignment="Center"
-     ToolTip="Application Version"/>
- </Grid>
-        </Border>
-  </Grid>
+   <!-- App Version -->
+<TextBlock Grid.Column="2" 
+    Text="{Binding AppVersion}"
+         Foreground="{DynamicResource TextSecondaryBrush}"
+                FontSize="11" 
+          VerticalAlignment="Center"
+          ToolTip="Application Version"/>
+   </Grid>
+ </Border>
+    </Grid>
 </Window>

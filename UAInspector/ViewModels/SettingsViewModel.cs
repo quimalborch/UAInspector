@@ -13,36 +13,61 @@ namespace UAInspector.ViewModels
     {
         private readonly StorageService _storageService;
         private readonly MainViewModel _mainViewModel;
+        private readonly ThemeService _themeService;
         private AppSettings _settings;
         private bool _startWithWindows;
-   private bool _isDirty;
+        private bool _isDirty;
 
-  /// <summary>
+        /// <summary>
         /// Application settings
         /// </summary>
-   public AppSettings Settings
+        public AppSettings Settings
         {
-     get => _settings;
+            get => _settings;
             set => SetProperty(ref _settings, value);
         }
 
         /// <summary>
-  /// Start with Windows setting
-  /// </summary>
+        /// Start with Windows setting
+        /// </summary>
         public bool StartWithWindows
         {
-get => _startWithWindows;
-  set
+            get => _startWithWindows;
+            set
             {
-       if (SetProperty(ref _startWithWindows, value))
+                if (SetProperty(ref _startWithWindows, value))
                 {
-           IsDirty = true;
-  ApplyStartWithWindows(value);
-     }
-    }
+                    IsDirty = true;
+                    ApplyStartWithWindows(value);
+                }
+            }
         }
 
-  /// <summary>
+        /// <summary>
+        /// Dark mode setting - inversed for UI (false = Dark, true = Light)
+        /// </summary>
+        public bool IsLightMode
+        {
+            get => !Settings?.DarkMode ?? false;
+            set
+            {
+                if (Settings != null && Settings.DarkMode == value)
+                {
+                    Settings.DarkMode = !value;
+                    OnPropertyChanged(nameof(IsLightMode));
+                    OnPropertyChanged(nameof(ThemeDisplayName));
+                    IsDirty = true;
+                    ApplyTheme(!value); // Apply immediately
+                }
+            }
+        }
+
+        /// <summary>
+        /// Display name for current theme
+        /// </summary>
+        public string ThemeDisplayName => IsLightMode ? "Light Mode" : "Dark Mode";
+
+        /// <summary>
         /// Indicates if settings have been modified
         /// </summary>
         public bool IsDirty
@@ -54,76 +79,82 @@ get => _startWithWindows;
         // Commands
         public ICommand SaveCommand { get; }
         public ICommand ResetCommand { get; }
-     public ICommand ExportCommand { get; }
+        public ICommand ExportCommand { get; }
 
         public SettingsViewModel(StorageService storageService, MainViewModel mainViewModel)
-     {
+        {
             _storageService = storageService;
             _mainViewModel = mainViewModel;
+            _themeService = new ThemeService();
 
-     // Load settings
-      LoadSettings();
+            // Load settings
+            LoadSettings();
 
-        // Initialize commands
-      SaveCommand = new RelayCommand(SaveSettings, () => IsDirty);
-    ResetCommand = new RelayCommand(ResetSettings);
-     ExportCommand = new RelayCommand(ExportSettings);
-  }
+            // Initialize commands
+            SaveCommand = new RelayCommand(SaveSettings, () => IsDirty);
+            ResetCommand = new RelayCommand(ResetSettings);
+            ExportCommand = new RelayCommand(ExportSettings);
+        }
 
         /// <summary>
-   /// Load settings from storage and registry
+        /// Load settings from storage and registry
         /// </summary>
-     private void LoadSettings()
+        private void LoadSettings()
         {
-          Settings = _storageService.LoadSettings();
-         
+            Settings = _storageService.LoadSettings();
+
             // Load StartWithWindows from registry
             _startWithWindows = StartupHelper.IsStartupEnabled();
             OnPropertyChanged(nameof(StartWithWindows));
 
-       // Sync with settings file
- if (Settings.StartWithWindows != _startWithWindows)
+            // Sync with settings file
+            if (Settings.StartWithWindows != _startWithWindows)
             {
-       Settings.StartWithWindows = _startWithWindows;
-    _storageService.SaveSettings(Settings);
-     }
+                Settings.StartWithWindows = _startWithWindows;
+                _storageService.SaveSettings(Settings);
+            }
 
-     IsDirty = false;
-      System.Diagnostics.Debug.WriteLine($"Settings loaded - StartWithWindows: {StartWithWindows}");
+            // Apply saved theme
+            ApplyTheme(Settings.DarkMode);
+            OnPropertyChanged(nameof(IsLightMode));
+            OnPropertyChanged(nameof(ThemeDisplayName));
+
+            IsDirty = false;
+            System.Diagnostics.Debug.WriteLine($"Settings loaded - StartWithWindows: {StartWithWindows}, Theme: {ThemeDisplayName}");
         }
 
         /// <summary>
         /// Save settings to storage
         /// </summary>
         private void SaveSettings()
-     {
+        {
             try
             {
- Settings.LastUpdated = DateTime.Now;
-      _storageService.SaveSettings(Settings);
-         
-   // Update MainViewModel settings
- _mainViewModel.Settings = Settings;
+                Settings.LastUpdated = DateTime.Now;
+                _storageService.SaveSettings(Settings);
 
-   IsDirty = false;
+                // Update MainViewModel settings
+                _mainViewModel.Settings = Settings;
 
-            System.Windows.MessageBox.Show(
-      "Settings saved successfully!",
-          "Settings",
-         System.Windows.MessageBoxButton.OK,
-              System.Windows.MessageBoxImage.Information);
+                IsDirty = false;
 
-             System.Diagnostics.Debug.WriteLine("Settings saved successfully");
- }
+                System.Windows.MessageBox.Show(
+                    "Settings saved successfully!",
+                    "Settings",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Information);
+
+                System.Diagnostics.Debug.WriteLine("Settings saved successfully");
+            }
             catch (Exception ex)
             {
-         System.Diagnostics.Debug.WriteLine($"Error saving settings: {ex.Message}");
-          System.Windows.MessageBox.Show(
-                $"Failed to save settings: {ex.Message}",
-            "Error",
-          System.Windows.MessageBoxButton.OK,
-           System.Windows.MessageBoxImage.Error);
-     }
+                System.Diagnostics.Debug.WriteLine($"Error saving settings: {ex.Message}");
+                System.Windows.MessageBox.Show(
+                    $"Failed to save settings: {ex.Message}",
+                    "Error",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+            }
         }
 
         /// <summary>
@@ -131,77 +162,96 @@ get => _startWithWindows;
         /// </summary>
         private void ResetSettings()
         {
-    var result = System.Windows.MessageBox.Show(
-    "Are you sure you want to reset all settings to default values?\n\nThis cannot be undone.",
-   "Confirm Reset",
-    System.Windows.MessageBoxButton.YesNo,
-    System.Windows.MessageBoxImage.Question);
+            var result = System.Windows.MessageBox.Show(
+                "Are you sure you want to reset all settings to default values?\n\nThis cannot be undone.",
+                "Confirm Reset",
+                System.Windows.MessageBoxButton.YesNo,
+                System.Windows.MessageBoxImage.Question);
 
             if (result == System.Windows.MessageBoxResult.Yes)
-  {
-   Settings = new AppSettings();
-    StartWithWindows = false;
-         IsDirty = true;
-    SaveSettings();
+            {
+                Settings = new AppSettings();
+                StartWithWindows = false;
+                ApplyTheme(Settings.DarkMode);
+                OnPropertyChanged(nameof(IsLightMode));
+                OnPropertyChanged(nameof(ThemeDisplayName));
+                IsDirty = true;
+                SaveSettings();
 
-       System.Diagnostics.Debug.WriteLine("Settings reset to defaults");
+                System.Diagnostics.Debug.WriteLine("Settings reset to defaults");
             }
-  }
+        }
 
         /// <summary>
         /// Export settings to file
         /// </summary>
         private void ExportSettings()
         {
-  // TODO: Implement export to user-selected file
-     System.Windows.MessageBox.Show(
-        "Export functionality coming soon!\n\nThis will allow you to export settings to a backup file.",
-            "Export Settings",
-      System.Windows.MessageBoxButton.OK,
+            // TODO: Implement export to user-selected file
+            System.Windows.MessageBox.Show(
+                "Export functionality coming soon!\n\nThis will allow you to export settings to a backup file.",
+                "Export Settings",
+                System.Windows.MessageBoxButton.OK,
                 System.Windows.MessageBoxImage.Information);
         }
 
- /// <summary>
+        /// <summary>
         /// Apply StartWithWindows setting to Windows registry
-      /// </summary>
+        /// </summary>
         private void ApplyStartWithWindows(bool enable)
-   {
+        {
             try
-    {
-      bool success = StartupHelper.SetStartup(enable);
+            {
+                bool success = StartupHelper.SetStartup(enable);
 
-       if (success)
- {
-           Settings.StartWithWindows = enable;
-          System.Diagnostics.Debug.WriteLine($"StartWithWindows set to: {enable}");
-      }
-        else
-           {
-        // Revert on failure
-           _startWithWindows = !enable;
-      OnPropertyChanged(nameof(StartWithWindows));
+                if (success)
+                {
+                    Settings.StartWithWindows = enable;
+                    System.Diagnostics.Debug.WriteLine($"StartWithWindows set to: {enable}");
+                }
+                else
+                {
+                    // Revert on failure
+                    _startWithWindows = !enable;
+                    OnPropertyChanged(nameof(StartWithWindows));
 
-         System.Windows.MessageBox.Show(
-             "Failed to update Windows startup settings.\n\nMake sure you have the necessary permissions.",
-             "Startup Error",
-    System.Windows.MessageBoxButton.OK,
-             System.Windows.MessageBoxImage.Warning);
+                    System.Windows.MessageBox.Show(
+                        "Failed to update Windows startup settings.\n\nMake sure you have the necessary permissions.",
+                        "Startup Error",
+                        System.Windows.MessageBoxButton.OK,
+                        System.Windows.MessageBoxImage.Warning);
                 }
             }
- catch (Exception ex)
+            catch (Exception ex)
             {
-            System.Diagnostics.Debug.WriteLine($"Error applying StartWithWindows: {ex.Message}");
-   
-         // Revert on error
-      _startWithWindows = !enable;
-            OnPropertyChanged(nameof(StartWithWindows));
+                System.Diagnostics.Debug.WriteLine($"Error applying StartWithWindows: {ex.Message}");
 
-         System.Windows.MessageBox.Show(
- $"Error updating startup settings: {ex.Message}",
- "Error",
-      System.Windows.MessageBoxButton.OK,
-         System.Windows.MessageBoxImage.Error);
-}
+                // Revert on error
+                _startWithWindows = !enable;
+                OnPropertyChanged(nameof(StartWithWindows));
+
+                System.Windows.MessageBox.Show(
+                    $"Error updating startup settings: {ex.Message}",
+                    "Error",
+                    System.Windows.MessageBoxButton.OK,
+                    System.Windows.MessageBoxImage.Error);
+            }
+        }
+
+        /// <summary>
+        /// Apply theme to application
+        /// </summary>
+        private void ApplyTheme(bool isDarkMode)
+        {
+            try
+            {
+                _themeService.ApplyTheme(isDarkMode);
+                System.Diagnostics.Debug.WriteLine($"Theme applied: {(isDarkMode ? "Dark" : "Light")} mode");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error applying theme: {ex.Message}");
+            }
         }
     }
 }

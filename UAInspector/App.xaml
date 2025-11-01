@@ -6,13 +6,16 @@
              StartupUri="MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Resources/Styles.xaml"/>
+          <ResourceDictionary.MergedDictionaries>
+   <!-- Theme will be loaded dynamically here -->
+   <ResourceDictionary Source="Resources/DarkTheme.xaml"/>
+     <!-- Control Styles -->
+       <ResourceDictionary Source="Resources/Styles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         
-            <!-- Converters -->
+     <!-- Converters -->
             <helpers:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
-            <helpers:BoolToRWConverter x:Key="BoolToRWConverter"/>
+         <helpers:BoolToRWConverter x:Key="BoolToRWConverter"/>
         </ResourceDictionary>
-    </Application.Resources>
+  </Application.Resources>
 </Application>
