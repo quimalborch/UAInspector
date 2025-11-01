@@ -1,23 +1,23 @@
 ﻿<Window x:Class="UAInspector.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:UAInspector"
         xmlns:vm="clr-namespace:UAInspector.ViewModels"
         xmlns:views="clr-namespace:UAInspector.Views"
-        mc:Ignorable="d"
+    mc:Ignorable="d"
         Title="UAInspector - OPC UA Client" Height="700" Width="1200"
-        WindowStartupLocation="CenterScreen"
+   WindowStartupLocation="CenterScreen"
         Background="{StaticResource BackgroundBrush}">
     
-    <Window.Resources>
+<Window.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
+<ResourceDictionary.MergedDictionaries>
           <ResourceDictionary Source="Resources/Styles.xaml"/>
        </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Window.Resources>
+    </ResourceDictionary>
+ </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -28,86 +28,97 @@
 
   <!-- Top Navigation Bar -->
         <Border Grid.Row="0" Background="{StaticResource SurfaceBrush}" 
-         BorderBrush="{StaticResource BorderBrush}"
+     BorderBrush="{StaticResource BorderBrush}"
            BorderThickness="0,0,0,1">
-            <Grid Height="56" Margin="16,0">
+         <Grid Height="56" Margin="16,0">
 <Grid.ColumnDefinitions>
     <ColumnDefinition Width="Auto"/>
-                  <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
           <ColumnDefinition Width="Auto"/>
              </Grid.ColumnDefinitions>
 
       <!-- App Title -->
     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
      <TextBlock Text="⚙" FontSize="24" Foreground="{StaticResource AccentBrush}" 
-        VerticalAlignment="Center" Margin="0,0,12,0"/>
+      VerticalAlignment="Center" Margin="0,0,12,0"/>
 <TextBlock Text="UAInspector" FontSize="18" FontWeight="SemiBold"
       Foreground="{StaticResource TextPrimaryBrush}"
-         VerticalAlignment="Center"/>
+      VerticalAlignment="Center"/>
  </StackPanel>
 
-              <!-- Navigation Buttons -->
-                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+   <!-- Navigation Buttons -->
+      <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
   <Button Content="🏠 Servers" 
    Command="{Binding ShowServerListCommand}"
       Style="{StaticResource SecondaryButton}"
-                 Margin="0,0,8,0" Padding="16,8"/>
+          Margin="0,0,8,0" Padding="16,8"/>
           <Button Content="🔍 Explorer" 
-              Command="{Binding ShowExplorerCommand}"
-              Style="{StaticResource SecondaryButton}"
-       Margin="0,0,8,0" Padding="16,8"/>
+  Command="{Binding ShowExplorerCommand}"
+    Margin="0,0,8,0" Padding="16,8"
+     ToolTip="Browse OPC UA address space (requires connection)">
+   <Button.Style>
+       <Style TargetType="Button" BasedOn="{StaticResource SecondaryButton}">
+ <Style.Triggers>
+      <DataTrigger Binding="{Binding IsConnected}" Value="False">
+   <Setter Property="Opacity" Value="0.5"/>
+  <Setter Property="Cursor" Value="No"/>
+              </DataTrigger>
+            </Style.Triggers>
+    </Style>
+        </Button.Style>
+          </Button>
  <Button Content="⚙ Settings" 
            Command="{Binding ShowSettingsCommand}"
        Style="{StaticResource SecondaryButton}"
            Padding="16,8"/>
-    </StackPanel>
+ </StackPanel>
             </Grid>
     </Border>
 
         <!-- Main Content Area -->
      <ContentControl Grid.Row="1" Content="{Binding CurrentViewModel}">
             <ContentControl.Resources>
-                <DataTemplate DataType="{x:Type vm:ServerListViewModel}">
+      <DataTemplate DataType="{x:Type vm:ServerListViewModel}">
          <views:ServerListView/>
-            </DataTemplate>
-            </ContentControl.Resources>
+      </DataTemplate>
+        </ContentControl.Resources>
         </ContentControl>
 
         <!-- Status Bar -->
   <Border Grid.Row="2" Background="{StaticResource SurfaceBrush}"
-                BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="0,1,0,0">
-            <Grid Height="32" Margin="16,0">
+    BorderBrush="{StaticResource BorderBrush}"
+    BorderThickness="0,1,0,0">
+ <Grid Height="32" Margin="16,0">
      <Grid.ColumnDefinitions>
    <ColumnDefinition Width="Auto"/>
          <ColumnDefinition Width="*"/>
-     <ColumnDefinition Width="Auto"/>
-          </Grid.ColumnDefinitions>
+   <ColumnDefinition Width="Auto"/>
+       </Grid.ColumnDefinitions>
 
   <!-- Connection Status -->
           <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-               <Ellipse Width="10" Height="10" Margin="0,0,8,0">
+       <Ellipse Width="10" Height="10" Margin="0,0,8,0">
 <Ellipse.Style>
  <Style TargetType="Ellipse">
       <Setter Property="Fill" Value="{StaticResource ErrorBrush}"/>
     <Style.Triggers>
-         <DataTrigger Binding="{Binding IsConnected}" Value="True">
+   <DataTrigger Binding="{Binding IsConnected}" Value="True">
     <Setter Property="Fill" Value="{StaticResource SuccessBrush}"/>
     </DataTrigger>
-      </Style.Triggers>
+ </Style.Triggers>
          </Style>
 </Ellipse.Style>
   </Ellipse>
-         <TextBlock Text="{Binding StatusMessage}" 
-         Foreground="{StaticResource TextSecondaryBrush}"
-          FontSize="12"/>
-       </StackPanel>
+  <TextBlock Text="{Binding StatusMessage}" 
+ Foreground="{StaticResource TextSecondaryBrush}"
+      FontSize="12"/>
+     </StackPanel>
 
     <!-- App Version -->
      <TextBlock Grid.Column="2" Text="v1.0.0" 
-                   Foreground="{StaticResource TextSecondaryBrush}"
+       Foreground="{StaticResource TextSecondaryBrush}"
       FontSize="11" VerticalAlignment="Center"/>
-            </Grid>
+ </Grid>
         </Border>
   </Grid>
 </Window>
