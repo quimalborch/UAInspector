@@ -77,15 +77,18 @@
 
         <!-- Main Content Area -->
      <ContentControl Grid.Row="1" Content="{Binding CurrentViewModel}">
-            <ContentControl.Resources>
+ <ContentControl.Resources>
       <DataTemplate DataType="{x:Type vm:ServerListViewModel}">
          <views:ServerListView/>
       </DataTemplate>
-      <DataTemplate DataType="{x:Type vm:ExplorerViewModel}">
+       <DataTemplate DataType="{x:Type vm:ExplorerViewModel}">
     <views:ExplorerView/>
-            </DataTemplate>
-        </ContentControl.Resources>
-        </ContentControl>
+      </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+    <views:SettingsView/>
+         </DataTemplate>
+   </ContentControl.Resources>
+    </ContentControl>
 
         <!-- Status Bar -->
   <Border Grid.Row="2" Background="{StaticResource SurfaceBrush}"

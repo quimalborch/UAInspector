@@ -126,16 +126,21 @@
     <Compile Include="Core\Services\OpcClientService.cs" />
     <Compile Include="Helpers\BoolToRWConverter.cs" />
     <Compile Include="Helpers\InverseBooleanConverter.cs" />
+    <Compile Include="Helpers\StartupHelper.cs" />
     <Compile Include="ViewModels\ExplorerViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\RelayCommand.cs" />
     <Compile Include="ViewModels\ServerListViewModel.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\ExplorerView.xaml.cs">
       <DependentUpon>ExplorerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ServerListView.xaml.cs">
       <DependentUpon>ServerListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SettingsView.xaml.cs">
+      <DependentUpon>SettingsView.xaml</DependentUpon>
     </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -160,6 +165,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ServerListView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingsView.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>

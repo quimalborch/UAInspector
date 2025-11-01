@@ -20,7 +20,7 @@ namespace UAInspector.ViewModels
    private OpcServerInfo _currentServer;
 
   public ObservableCollection<OpcServerInfo> RecentServers { get; }
-    public AppSettings Settings { get; private set; }
+    public AppSettings Settings { get; set; }
 
         /// <summary>
  /// Shared OPC Client Service instance
@@ -137,20 +137,11 @@ StatusMessage = "Ready - Select or add a server to connect";
 
   private void ShowSettings()
         {
-    // TODO: Implement SettingsViewModel
-     // CurrentViewModel = new SettingsViewModel(_storageService, Settings);
+  // Create SettingsViewModel with shared storage service
+     CurrentViewModel = new SettingsViewModel(_storageService, this);
   StatusMessage = "Settings";
      
-    System.Windows.MessageBox.Show(
-      "Settings view is not yet implemented.\n\n" +
-  "This will allow you to configure:\n" +
-  "- Connection timeouts\n" +
-   "- Subscription settings\n" +
- "- Certificate management\n" +
-"- UI preferences",
- "Coming Soon",
-System.Windows.MessageBoxButton.OK,
-      System.Windows.MessageBoxImage.Information);
+    System.Diagnostics.Debug.WriteLine("Settings view loaded");
    }
 
   private void Exit()
