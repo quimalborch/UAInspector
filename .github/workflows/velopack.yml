@@ -1,9 +1,8 @@
 name: Deploy to GitHub Releases
 
 on:
-  push:
-    branches:
-      - main
+  release:
+    types: [published]
 
 jobs:
   deploy-to-github-releases:
@@ -11,23 +10,19 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-      - name: Get Version from Project File
+      - name: Get Version from Release Tag
         id: get-version
         shell: bash
-        run: echo "version=$(grep -oE '<Version>[^<]+' UAInspector/UAInspector.csproj | sed 's/<Version>//')" >> $GITHUB_OUTPUT
-      - name: Install .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x
-      - name: Install .NET
+        run: echo "version=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
       - name: Publish Application
-        run: dotnet publish MyProject/MyProject.csproj -c Release -o publish -r win-x64 --self-contained true
+        run: dotnet publish UAInspector/UAInspector.csproj -c Release -o publish -r win-x64 --self-contained true
       - name: Create Velopack Release
         run: |
           dotnet tool install -g vpk
           vpk download github --repoUrl https://github.com/${{ github.repository }}
-          vpk pack -u MyUniqueIdentifier -v ${{ steps.get-version.outputs.version }} -p publish
-          vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --releaseName "MyProject ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }}
+          vpk pack -u UAInspector -v ${{ steps.get-version.outputs.version }} -p publish
+          vpk upload github --repoUrl https://github.com/${{ github.repository }} --publish --releaseName "UAInspector ${{ steps.get-version.outputs.version }}" --tag v${{ steps.get-version.outputs.version }}
