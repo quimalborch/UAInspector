@@ -31,12 +31,12 @@ namespace UAInspector.ViewModels
   {
   get => _currentViewModel;
     set => SetProperty(ref _currentViewModel, value);
-    }
+  }
 
   public string StatusMessage
 {
    get => _statusMessage;
-   set => SetProperty(ref _statusMessage, value);
+ set => SetProperty(ref _statusMessage, value);
    }
 
      public bool IsConnected
@@ -44,11 +44,11 @@ namespace UAInspector.ViewModels
   get => _isConnected;
    set
          {
-        if (SetProperty(ref _isConnected, value))
+      if (SetProperty(ref _isConnected, value))
  {
   // Notify Explorer command to update
            (ShowExplorerCommand as RelayCommand)?.RaiseCanExecuteChanged();
-        }
+}
 }
  }
 
@@ -67,7 +67,7 @@ namespace UAInspector.ViewModels
    public MainViewModel()
   {
        _storageService = new StorageService();
-        _opcClientService = new OpcClientService();
+   _opcClientService = new OpcClientService();
       RecentServers = new ObservableCollection<OpcServerInfo>();
       Settings = _storageService.LoadSettings();
 
@@ -78,36 +78,36 @@ namespace UAInspector.ViewModels
      ExitCommand = new RelayCommand(Exit);
 
         // Initialize OPC client
-      InitializeOpcClient();
+  InitializeOpcClient();
 
       // Load data
  LoadRecentServers();
 
     // Show server list by default
-       ShowServerList();
+    ShowServerList();
 StatusMessage = "Ready - Select or add a server to connect";
-        }
+      }
 
         private async void InitializeOpcClient()
         {
             try
             {
-                await _opcClientService.InitializeAsync();
-             System.Diagnostics.Debug.WriteLine("OPC UA client initialized in MainViewModel");
+        await _opcClientService.InitializeAsync();
+         System.Diagnostics.Debug.WriteLine("OPC UA client initialized in MainViewModel");
   }
             catch (Exception ex)
-      {
+  {
     System.Diagnostics.Debug.WriteLine($"Failed to initialize OPC UA client: {ex.Message}");
-            }
+    }
     }
 
         private void LoadRecentServers()
       {
     RecentServers.Clear();
       var servers = _storageService.LoadServers();
-     foreach (var server in servers.Take(10))
+ foreach (var server in servers.Take(10))
       {
-         RecentServers.Add(server);
+   RecentServers.Add(server);
       }
   }
 
@@ -128,16 +128,11 @@ StatusMessage = "Ready - Select or add a server to connect";
    return;
     }
 
-   // TODO: Implement ExplorerViewModel
- // CurrentViewModel = new ExplorerViewModel(_storageService, this, _opcClientService);
+   // Create ExplorerViewModel with shared OPC client service
+ CurrentViewModel = new ExplorerViewModel(_storageService, this);
         StatusMessage = $"Connected to {CurrentServer?.Name ?? "server"} - Browsing address space";
      
- System.Windows.MessageBox.Show(
-       "Explorer view is not yet implemented.\n\n" +
-   "This will show the OPC UA node tree browser.",
-"Coming Soon",
-    System.Windows.MessageBoxButton.OK,
-     System.Windows.MessageBoxImage.Information);
+      System.Diagnostics.Debug.WriteLine("Explorer view loaded");
   }
 
   private void ShowSettings()
@@ -152,7 +147,7 @@ StatusMessage = "Ready - Select or add a server to connect";
   "- Connection timeouts\n" +
    "- Subscription settings\n" +
  "- Certificate management\n" +
-   "- UI preferences",
+"- UI preferences",
  "Coming Soon",
 System.Windows.MessageBoxButton.OK,
       System.Windows.MessageBoxImage.Information);
@@ -163,16 +158,16 @@ System.Windows.MessageBoxButton.OK,
  // Disconnect before closing
     if (IsConnected && _opcClientService != null)
         {
-            try
+ try
    {
-                _opcClientService.DisconnectAsync().Wait();
+_opcClientService.DisconnectAsync().Wait();
  }
   catch (Exception ex)
-          {
+   {
          System.Diagnostics.Debug.WriteLine($"Error disconnecting on exit: {ex.Message}");
        }
         }
-        
+      
 System.Windows.Application.Current.Shutdown();
   }
 
@@ -181,7 +176,7 @@ System.Windows.Application.Current.Shutdown();
   IsConnected = true;
             CurrentServer = serverInfo;
     StatusMessage = $"Connected to {serverInfo.Name} ({serverInfo.Url})";
-      _storageService.AddOrUpdateServer(serverInfo);
+  _storageService.AddOrUpdateServer(serverInfo);
 LoadRecentServers();
         
    System.Diagnostics.Debug.WriteLine($"MainViewModel: Connection state updated - IsConnected={IsConnected}");
@@ -192,7 +187,7 @@ public void OnDisconnected()
  IsConnected = false;
  CurrentServer = null;
 StatusMessage = "Disconnected - Select a server to reconnect";
-     
+  
       System.Diagnostics.Debug.WriteLine($"MainViewModel: Connection state updated - IsConnected={IsConnected}");
   }
     }

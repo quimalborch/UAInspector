@@ -81,6 +81,9 @@
       <DataTemplate DataType="{x:Type vm:ServerListViewModel}">
          <views:ServerListView/>
       </DataTemplate>
+      <DataTemplate DataType="{x:Type vm:ExplorerViewModel}">
+    <views:ExplorerView/>
+            </DataTemplate>
         </ContentControl.Resources>
         </ContentControl>
 
