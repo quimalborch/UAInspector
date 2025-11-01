@@ -39,7 +39,7 @@
 
       <!-- App Title -->
     <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
-     <TextBlock Text="⚙" FontSize="24" Foreground="{StaticResource AccentBrush}" 
+     <TextBlock Text="📊" FontSize="24" Foreground="{StaticResource AccentBrush}" 
       VerticalAlignment="Center" Margin="0,0,12,0"/>
 <TextBlock Text="UAInspector" FontSize="18" FontWeight="SemiBold"
       Foreground="{StaticResource TextPrimaryBrush}"
