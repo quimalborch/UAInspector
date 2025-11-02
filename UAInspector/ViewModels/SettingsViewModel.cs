@@ -58,6 +58,9 @@ namespace UAInspector.ViewModels
                     OnPropertyChanged(nameof(ThemeDisplayName));
                     IsDirty = true;
                     ApplyTheme(!value); // Apply immediately
+
+                    // Auto-save theme changes
+                    SaveThemeSetting();
                 }
             }
         }
@@ -251,6 +254,30 @@ namespace UAInspector.ViewModels
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error applying theme: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Save only theme setting without showing confirmation message
+        /// </summary>
+        private void SaveThemeSetting()
+        {
+            try
+            {
+                Settings.LastUpdated = DateTime.Now;
+                _storageService.SaveSettings(Settings);
+
+                // Update MainViewModel settings
+                _mainViewModel.Settings = Settings;
+
+                // Reset IsDirty since theme is auto-saved
+                IsDirty = false;
+
+                System.Diagnostics.Debug.WriteLine($"Theme setting auto-saved: {ThemeDisplayName}");
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error auto-saving theme setting: {ex.Message}");
             }
         }
     }
