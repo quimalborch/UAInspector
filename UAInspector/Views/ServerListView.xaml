@@ -178,11 +178,11 @@
      Cursor="Hand">
    <Border.Style>
       <Style TargetType="Border">
-          <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
-             <Style.Triggers>
+ <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+         <Style.Triggers>
           <Trigger Property="IsMouseOver" Value="True">
    <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
-     <Setter Property="Background" Value="#2A2A2D"/>
+     <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
          </Trigger>
     </Style.Triggers>
       </Style>
@@ -247,40 +247,40 @@ Content="🗑️"
      <StackPanel Grid.Column="0" 
          Orientation="Horizontal">
  <!-- Security Badge -->
-     <Border Background="#2D2D30"
-     BorderBrush="{DynamicResource BorderBrush}"
+     <Border Background="{DynamicResource SurfaceBrush}"
+   BorderBrush="{DynamicResource BorderBrush}"
        BorderThickness="1"
      CornerRadius="4"
-        Padding="8,4"
+     Padding="8,4"
    Margin="0,0,8,0">
 <StackPanel Orientation="Horizontal">
         <TextBlock Text="🔒" 
     FontSize="11" 
  VerticalAlignment="Center"
     Margin="0,0,4,0"/>
-            <TextBlock Text="{Binding SecurityMode}" 
+  <TextBlock Text="{Binding SecurityMode}" 
  FontSize="11"
- Foreground="{DynamicResource TextSecondaryBrush}"
-     VerticalAlignment="Center"/>
+ Foreground="{DynamicResource TextPrimaryBrush}"
+   VerticalAlignment="Center"/>
      </StackPanel>
        </Border>
    
           <!-- Login Type Badge -->
-          <Border Background="#2D2D30"
+          <Border Background="{DynamicResource SurfaceBrush}"
  BorderBrush="{DynamicResource BorderBrush}"
  BorderThickness="1"
    CornerRadius="4"
          Padding="8,4">
   <StackPanel Orientation="Horizontal">
-              <TextBlock Text="👤" 
+    <TextBlock Text="👤" 
        FontSize="11" 
     VerticalAlignment="Center"
       Margin="0,0,4,0"/>
           <TextBlock Text="{Binding LastLoginType}" 
   FontSize="11"
-     Foreground="{DynamicResource TextSecondaryBrush}"
+     Foreground="{DynamicResource TextPrimaryBrush}"
  VerticalAlignment="Center"/>
-        </StackPanel>
+    </StackPanel>
       </Border>
     </StackPanel>
         </Grid>
@@ -336,6 +336,7 @@ Content="🔌 Connect to Selected"
     <Style TargetType="Button" BasedOn="{StaticResource ModernButton}">
 <Setter Property="Visibility" Value="Collapsed"/>
  <Setter Property="Background" Value="{DynamicResource ErrorBrush}"/>
+<Setter Property="Foreground" Value="White"/>
 <Style.Triggers>
        <DataTrigger Binding="{Binding IsConnected}" Value="True">
  <Setter Property="Visibility" Value="Visible"/>
@@ -449,7 +450,7 @@ Content="🔌 Connect to Selected"
          <Style.Triggers>
        <Trigger Property="IsMouseOver" Value="True">
   <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}"/>
-   <Setter Property="Background" Value="#2A2A2D"/>
+   <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
    </Trigger>
     </Style.Triggers>
     </Style>
@@ -490,8 +491,8 @@ Margin="0,0,0,6"
        TextWrapping="Wrap"/>
      
   <Border Grid.Row="2"
-      Background="#2D2D30"
-     CornerRadius="3"
+      Background="{DynamicResource SurfaceBrush}"
+CornerRadius="3"
     Padding="6,3"
      HorizontalAlignment="Left">
      <TextBlock FontSize="10"
