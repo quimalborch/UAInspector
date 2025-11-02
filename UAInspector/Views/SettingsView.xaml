@@ -75,7 +75,9 @@
 
           <!-- Section Title -->
      <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,16">
-       <TextBlock Text="⚙️" FontSize="20" VerticalAlignment="Center" Margin="0,0,10,0"/>
+       <TextBlock Text="⚙️" FontSize="20" VerticalAlignment="Center" 
+   Foreground="{DynamicResource TextPrimaryBrush}"
+           Margin="0,0,10,0"/>
          <TextBlock Text="General" 
    FontSize="18" 
        FontWeight="SemiBold"
@@ -101,15 +103,16 @@
 
              <!-- Icon -->
                 <Border Grid.Column="0" 
-             Background="{DynamicResource AccentBrush}"
+ Background="{DynamicResource AccentBrush}"
          Width="40" Height="40"
-        CornerRadius="8"
+   CornerRadius="8"
          Margin="0,0,16,0">
-               <TextBlock Text="🚀" 
-                FontSize="20"
-               HorizontalAlignment="Center"
+ <TextBlock Text="🚀" 
+    FontSize="20"
+    Foreground="{DynamicResource TextPrimaryBrush}"
+         HorizontalAlignment="Center"
   VerticalAlignment="Center"/>
-     </Border>
+ </Border>
 
     <!-- Info -->
             <StackPanel Grid.Column="1" VerticalAlignment="Center">
@@ -213,7 +216,9 @@ Foreground="{DynamicResource TextSecondaryBrush}"
           </Grid.RowDefinitions>
 
              <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,16">
-                            <TextBlock Text="🔌" FontSize="20" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <TextBlock Text="🔌" FontSize="20" VerticalAlignment="Center" 
+   Foreground="{DynamicResource TextPrimaryBrush}"
+           Margin="0,0,10,0"/>
    <TextBlock Text="Appearance" 
       FontSize="18" 
                 FontWeight="SemiBold"
@@ -243,6 +248,7 @@ Foreground="{DynamicResource TextSecondaryBrush}"
          Margin="0,0,16,0">
           <TextBlock Text="🌙" 
               FontSize="20"
+    Foreground="{DynamicResource TextPrimaryBrush}"
     HorizontalAlignment="Center"
    VerticalAlignment="Center"/>
              </Border>
@@ -348,7 +354,9 @@ Margin="3,0,0,0">
         </Grid.RowDefinitions>
 
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,16">
-        <TextBlock Text="🎨" FontSize="20" VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <TextBlock Text="🎨" FontSize="20" VerticalAlignment="Center" 
+   Foreground="{DynamicResource TextPrimaryBrush}"
+    Margin="0,0,10,0"/>
         <TextBlock Text="Connection" 
  FontSize="18" 
                   FontWeight="SemiBold"
@@ -358,13 +366,13 @@ Margin="3,0,0,0">
     CornerRadius="4"
      Padding="8,2"
               Margin="12,0,0,0"
-       VerticalAlignment="Center">
-          <TextBlock Text="COMING SOON" 
-         FontSize="10"
+    VerticalAlignment="Center">
+   <TextBlock Text="COMING SOON" 
+ FontSize="10"
       FontWeight="Bold"
-              Foreground="White"/>
+    Foreground="White"/>
             </Border>
-      </StackPanel>
+   </StackPanel>
 
         <TextBlock Grid.Row="1" 
                  Text="Connection timeout, retry settings, and more" 
@@ -381,18 +389,18 @@ Margin="3,0,0,0">
   Padding="16">
     <StackPanel>
  <TextBlock Text="ℹ️ About Settings" 
-          FontSize="14"
+      FontSize="14"
    FontWeight="SemiBold"
-           Foreground="{DynamicResource TextPrimaryBrush}"
+    Foreground="{DynamicResource TextPrimaryBrush}"
   Margin="0,0,0,8"/>
    <TextBlock FontSize="12"
 Foreground="{DynamicResource TextSecondaryBrush}"
-           TextWrapping="Wrap">
+   TextWrapping="Wrap">
      <Run Text="Settings are saved automatically when you make changes."/>
-            <LineBreak/>
+          <LineBreak/>
     <Run Text="Configuration file location:"/>
-               <Run Text="%APPDATA%\UAInspector\AppSettings.json" FontFamily="Consolas"/>
-           </TextBlock>
+   <Run Text="%APPDATA%\UAInspector\AppSettings.json" FontFamily="Consolas"/>
+  </TextBlock>
       </StackPanel>
   </Border>
 
