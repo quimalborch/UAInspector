@@ -17,7 +17,7 @@
   BorderBrush="{DynamicResource BorderBrush}"
   BorderThickness="0,0,0,1" Padding="24,20">
          <Grid>
-          <Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions>
   <ColumnDefinition Width="*"/>
            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
@@ -33,8 +33,8 @@
     CornerRadius="6"
     Padding="12,6"
       Margin="0,8,0,0"
-      MaxWidth="400"
-             HorizontalAlignment="Left">
+    MaxWidth="400"
+          HorizontalAlignment="Left">
    <Border.Style>
          <Style TargetType="Border">
    <Setter Property="Visibility" Value="Collapsed"/>
@@ -42,18 +42,18 @@
 <DataTrigger Binding="{Binding IsConnected}" Value="True">
      <Setter Property="Visibility" Value="Visible"/>
   </DataTrigger>
-         </Style.Triggers>
+     </Style.Triggers>
       </Style>
   </Border.Style>
   <StackPanel Orientation="Horizontal">
-         <TextBlock Text="●" FontSize="14" 
+     <TextBlock Text="●" FontSize="14" 
     Foreground="White"
         VerticalAlignment="Center" 
    Margin="0,0,8,0"/>
       <TextBlock VerticalAlignment="Center"
       Foreground="White"
    FontSize="13"
-       FontWeight="Medium">
+  FontWeight="Medium">
        <Run Text="Connected to:"/>
   <Run Text="{Binding ConnectedServer.Name, Mode=OneWay}" FontWeight="Bold"/>
   </TextBlock>
@@ -68,16 +68,16 @@
            <Button Content="🔄 Refresh" 
          Command="{Binding RefreshCommand}"
    Style="{DynamicResource SecondaryButton}"
-          Padding="16,10"
+      Padding="16,10"
     Margin="0,0,8,0"
-         ToolTip="Refresh server list"/>
-      </StackPanel>
+     ToolTip="Refresh server list"/>
+  </StackPanel>
        </Grid>
    </Border>
 
     <!-- Main Content -->
    <Grid Grid.Row="1" Margin="24">
-    <Grid.ColumnDefinitions>
+  <Grid.ColumnDefinitions>
    <ColumnDefinition Width="2*" MinWidth="400"/>
       <ColumnDefinition Width="20"/>
    <ColumnDefinition Width="1.2*" MinWidth="300"/>
@@ -99,19 +99,19 @@
       <StackPanel Grid.Row="0" 
  Orientation="Horizontal" 
     Margin="0,0,0,16">
-     <TextBlock Text="🖥️" 
+ <TextBlock Text="🖥️" 
       FontSize="20" 
  VerticalAlignment="Center" 
            Margin="0,0,10,0"/>
    <TextBlock Text="Saved Servers" 
       FontSize="18" 
         FontWeight="SemiBold"
-          Foreground="{DynamicResource TextPrimaryBrush}"
-          VerticalAlignment="Center"/>
+   Foreground="{DynamicResource TextPrimaryBrush}"
+        VerticalAlignment="Center"/>
        <Border Background="{DynamicResource AccentBrush}"
    CornerRadius="10"
         Padding="8,2"
-    Margin="12,0,0,0"
+Margin="12,0,0,0"
   VerticalAlignment="Center">
    <TextBlock Text="{Binding Servers.Count, StringFormat='{}{0}'}" 
       FontSize="12"
@@ -138,7 +138,7 @@
      <TextBlock Grid.Column="0"
          Text="🔗" 
       FontSize="20"
-      VerticalAlignment="Center"
+VerticalAlignment="Center"
    Margin="0,0,12,0"/>
    
  <TextBox Grid.Column="1" 
@@ -157,12 +157,13 @@
       Content="➕ Add"
   Command="{Binding AddManualCommand}"
     Style="{DynamicResource ModernButton}"
+      Foreground="White"
          FontSize="13"
  Padding="20,10"/>
 </Grid>
    </Border>
 
-     <!-- Server List -->
+  <!-- Server List -->
     <ScrollViewer Grid.Row="2" 
    VerticalScrollBarVisibility="Auto"
      HorizontalScrollBarVisibility="Disabled">
@@ -179,9 +180,9 @@
    <Border.Style>
       <Style TargetType="Border">
  <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
-         <Style.Triggers>
-          <Trigger Property="IsMouseOver" Value="True">
-   <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+     <Style.Triggers>
+     <Trigger Property="IsMouseOver" Value="True">
+ <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
      <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
          </Trigger>
     </Style.Triggers>
@@ -189,7 +190,7 @@
    </Border.Style>
        
              <Border.InputBindings>
-    <MouseBinding Gesture="LeftClick" 
+<MouseBinding Gesture="LeftClick" 
       Command="{Binding DataContext.ConnectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
      CommandParameter="{Binding}"/>
        <MouseBinding Gesture="LeftDoubleClick" 
@@ -198,13 +199,13 @@
   </Border.InputBindings>
       
        <Grid>
-               <Grid.RowDefinitions>
+    <Grid.RowDefinitions>
            <RowDefinition Height="Auto"/>
         <RowDefinition Height="Auto"/>
   <RowDefinition Height="Auto"/>
-        <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
      </Grid.RowDefinitions>
-           
+       
   <!-- Header Row -->
 <Grid Grid.Row="0">
   <Grid.ColumnDefinitions>
@@ -213,11 +214,11 @@
   </Grid.ColumnDefinitions>
      
      <TextBlock Grid.Column="0"
-    Text="{Binding Name}" 
-      FontSize="16" 
+ Text="{Binding Name}" 
+ FontSize="16" 
       FontWeight="SemiBold"
-              Foreground="{DynamicResource TextPrimaryBrush}"/>
-          
+          Foreground="{DynamicResource TextPrimaryBrush}"/>
+      
  <Button Grid.Column="1"
 Content="🗑️"
  Command="{Binding DataContext.DeleteServerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
@@ -226,18 +227,18 @@ Content="🗑️"
  Padding="8,4"
     FontSize="12"
     ToolTip="Delete server"
-     Opacity="0.7"/>
+ Opacity="0.7"/>
      </Grid>
-          
+ 
         <!-- URL -->
  <TextBlock Grid.Row="1" 
           Text="{Binding Url}" 
       FontSize="13"
     FontFamily="Consolas"
-        Foreground="{DynamicResource AccentBrush}"
+    Foreground="{DynamicResource AccentBrush}"
   Margin="0,6,0,0"/>
    
-             <!-- Info Row -->
+  <!-- Info Row -->
       <Grid Grid.Row="2" Margin="0,8,0,0">
      <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
@@ -249,16 +250,16 @@ Content="🗑️"
  <!-- Security Badge -->
      <Border Background="{DynamicResource SurfaceBrush}"
    BorderBrush="{DynamicResource BorderBrush}"
-       BorderThickness="1"
+     BorderThickness="1"
      CornerRadius="4"
-     Padding="8,4"
+  Padding="8,4"
    Margin="0,0,8,0">
 <StackPanel Orientation="Horizontal">
         <TextBlock Text="🔒" 
   FontSize="11" 
  VerticalAlignment="Center"
  Foreground="{DynamicResource TextPrimaryBrush}"
-    Margin="0,0,4,0"/>
+  Margin="0,0,4,0"/>
   <TextBlock Text="{Binding SecurityMode}" 
  FontSize="11"
  Foreground="{DynamicResource TextPrimaryBrush}"
@@ -267,7 +268,7 @@ Content="🗑️"
        </Border>
    
           <!-- Login Type Badge -->
-          <Border Background="{DynamicResource SurfaceBrush}"
+     <Border Background="{DynamicResource SurfaceBrush}"
  BorderBrush="{DynamicResource BorderBrush}"
  BorderThickness="1"
    CornerRadius="4"
@@ -299,10 +300,10 @@ VerticalAlignment="Center"
     </Border>
       </DataTemplate>
       </ItemsControl.ItemTemplate>
-              </ItemsControl>
+ </ItemsControl>
        </ScrollViewer>
 
-   <!-- Action Buttons -->
+ <!-- Action Buttons -->
  <Grid Grid.Row="3" Margin="0,16,0,0">
       <Grid.ColumnDefinitions>
       <ColumnDefinition Width="*"/>
@@ -313,27 +314,28 @@ VerticalAlignment="Center"
    <Button Grid.Column="1"
 Content="🔌 Connect to Selected" 
       Command="{Binding ConnectCommand}"
-       Padding="24,12"
+     Padding="24,12"
   FontSize="14"
-  FontWeight="SemiBold">
+  FontWeight="SemiBold"
+  Foreground="White">
  <Button.Style>
-       <Style TargetType="Button" BasedOn="{StaticResource ModernButton}">
+   <Style TargetType="Button" BasedOn="{StaticResource ModernButton}">
      <Style.Triggers>
-            <DataTrigger Binding="{Binding IsConnected}" Value="True">
-      <Setter Property="Visibility" Value="Collapsed"/>
+       <DataTrigger Binding="{Binding IsConnected}" Value="True">
+<Setter Property="Visibility" Value="Collapsed"/>
   </DataTrigger>
 </Style.Triggers>
  </Style>
    </Button.Style>
      </Button>
         
-      <!-- Disconnect Button -->
+ <!-- Disconnect Button -->
   <Button Grid.Column="1"
           Content="⚡ Disconnect" 
         Command="{Binding DisconnectCommand}"
      Padding="24,12"
   FontSize="14"
-    FontWeight="SemiBold">
+ FontWeight="SemiBold">
    <Button.Style>
     <Style TargetType="Button" BasedOn="{StaticResource ModernButton}">
 <Setter Property="Visibility" Value="Collapsed"/>
@@ -342,11 +344,11 @@ Content="🔌 Connect to Selected"
 <Style.Triggers>
        <DataTrigger Binding="{Binding IsConnected}" Value="True">
  <Setter Property="Visibility" Value="Visible"/>
-     </DataTrigger>
+   </DataTrigger>
  <Trigger Property="IsMouseOver" Value="True">
       <Setter Property="Background" Value="#C81123"/>
     </Trigger>
-      </Style.Triggers>
+   </Style.Triggers>
      </Style>
  </Button.Style>
      </Button>
@@ -355,7 +357,7 @@ Content="🔌 Connect to Selected"
  </Border>
 
       <!-- Right Panel: Server Discovery -->
-    <Border Grid.Column="2" 
+  <Border Grid.Column="2" 
    Style="{DynamicResource Card}"
    Padding="20">
   <Grid>
@@ -367,15 +369,15 @@ Content="🔌 Connect to Selected"
 </Grid.RowDefinitions>
 
 <!-- Title -->
-         <StackPanel Grid.Row="0" 
+       <StackPanel Grid.Row="0" 
       Orientation="Horizontal" 
-           Margin="0,0,0,16">
+   Margin="0,0,0,16">
         <TextBlock Text="🔍" 
-      FontSize="20" 
+    FontSize="20" 
    VerticalAlignment="Center" 
-         Margin="0,0,10,0"/>
+   Margin="0,0,10,0"/>
   <TextBlock Text="Discover Servers" 
-          FontSize="18" 
+     FontSize="18" 
       FontWeight="SemiBold"
    Foreground="{DynamicResource TextPrimaryBrush}"
   VerticalAlignment="Center"/>
@@ -387,11 +389,12 @@ Content="🔌 Connect to Selected"
       HorizontalAlignment="Stretch"
   Margin="0,0,0,16" 
  Padding="0,14"
-      FontSize="14"
-          FontWeight="Medium">
+    FontSize="14"
+        FontWeight="Medium"
+     Foreground="White">
 <Button.Style>
   <Style TargetType="Button" BasedOn="{StaticResource ModernButton}">
-      <Setter Property="Content" Value="🌐 Scan Network"/>
+    <Setter Property="Content" Value="🌐 Scan Network"/>
   <Style.Triggers>
  <DataTrigger Binding="{Binding IsDiscovering}" Value="True">
  <Setter Property="Content" Value="⌛ Scanning..."/>
@@ -405,22 +408,22 @@ Content="🔌 Connect to Selected"
     <!-- Discovery Status -->
   <Border Grid.Row="2"
   Background="{DynamicResource SurfaceBrush}"
-             BorderBrush="{DynamicResource AccentBrush}"
+         BorderBrush="{DynamicResource AccentBrush}"
       BorderThickness="1"
       CornerRadius="6"
-           Padding="12,8"
+    Padding="12,8"
       Margin="0,0,0,16">
    <Border.Style>
-        <Style TargetType="Border">
+  <Style TargetType="Border">
          <Setter Property="Visibility" Value="Collapsed"/>
             <Style.Triggers>
-        <DataTrigger Binding="{Binding IsDiscovering}" Value="True">
+   <DataTrigger Binding="{Binding IsDiscovering}" Value="True">
  <Setter Property="Visibility" Value="Visible"/>
-         </DataTrigger>
+    </DataTrigger>
      </Style.Triggers>
      </Style>
  </Border.Style>
-    <StackPanel Orientation="Horizontal">
+ <StackPanel Orientation="Horizontal">
      <TextBlock Text="⏳" 
  FontSize="14" 
    VerticalAlignment="Center"
@@ -439,21 +442,21 @@ Content="🔌 Connect to Selected"
           HorizontalScrollBarVisibility="Disabled">
     <ItemsControl ItemsSource="{Binding DiscoveredServers}">
   <ItemsControl.ItemTemplate>
-        <DataTemplate>
+     <DataTemplate>
    <Border Background="{DynamicResource SurfaceBrush}"
   BorderBrush="{DynamicResource BorderBrush}"
          BorderThickness="1"
    CornerRadius="6"
      Margin="0,0,0,10"
-           Padding="12"
-        Cursor="Hand">
+        Padding="12"
+    Cursor="Hand">
     <Border.Style>
         <Style TargetType="Border">
-         <Style.Triggers>
-       <Trigger Property="IsMouseOver" Value="True">
+<Style.Triggers>
+     <Trigger Property="IsMouseOver" Value="True">
   <Setter Property="BorderBrush" Value="{DynamicResource SuccessBrush}"/>
    <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}"/>
-   </Trigger>
+</Trigger>
     </Style.Triggers>
     </Style>
    </Border.Style>
@@ -462,9 +465,9 @@ Content="🔌 Connect to Selected"
            <MouseBinding Gesture="LeftDoubleClick" 
   Command="{Binding DataContext.ConnectCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
   CommandParameter="{Binding}"/>
-                </Border.InputBindings>
-     <Grid>
-     <Grid.RowDefinitions>
+  </Border.InputBindings>
+ <Grid>
+ <Grid.RowDefinitions>
     <RowDefinition Height="Auto"/>
  <RowDefinition Height="Auto"/>
    <RowDefinition Height="Auto"/>
@@ -475,7 +478,7 @@ Content="🔌 Connect to Selected"
          Margin="0,0,0,6">
          <TextBlock Text="🆕" 
  FontSize="12"
-               VerticalAlignment="Center"
+        VerticalAlignment="Center"
      Margin="0,0,6,0"/>
     
       <TextBlock Text="{Binding Name}" 
@@ -484,7 +487,7 @@ Content="🔌 Connect to Selected"
     VerticalAlignment="Center"/>
      </StackPanel>
 
-     <TextBlock Grid.Row="1" 
+   <TextBlock Grid.Row="1" 
  Text="{Binding Url}" 
 FontSize="11"
   FontFamily="Consolas"
@@ -504,7 +507,7 @@ CornerRadius="3"
  </TextBlock>
       </Border>
   </Grid>
-      </Border>
+    </Border>
    </DataTemplate>
   </ItemsControl.ItemTemplate>
      </ItemsControl>
