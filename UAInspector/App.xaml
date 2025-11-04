@@ -16,6 +16,10 @@
      <!-- Converters -->
             <helpers:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
          <helpers:BoolToRWConverter x:Key="BoolToRWConverter"/>
+<helpers:EnumToBoolConverter x:Key="EnumToBoolConverter"/>
+  <helpers:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
+    <helpers:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    <helpers:BooleanAndConverter x:Key="BooleanAndConverter"/>
         </ResourceDictionary>
   </Application.Resources>
 </Application>

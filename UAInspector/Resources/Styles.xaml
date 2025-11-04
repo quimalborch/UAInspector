@@ -79,6 +79,37 @@ BorderThickness="{TemplateBinding BorderThickness}"
     </Style.Triggers>
     </Style>
 
+    <!-- Modern PasswordBox Style -->
+    <Style x:Key="ModernPasswordBox" TargetType="PasswordBox">
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
+<Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+ <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="FontSize" Value="14"/>
+     <Setter Property="Template">
+   <Setter.Value>
+        <ControlTemplate TargetType="PasswordBox">
+       <Border Background="{TemplateBinding Background}"
+             BorderBrush="{TemplateBinding BorderBrush}"
+             BorderThickness="{TemplateBinding BorderThickness}"
+         CornerRadius="4">
+           <ScrollViewer x:Name="PART_ContentHost"
+        Margin="{TemplateBinding Padding}"/>
+           </Border>
+   </ControlTemplate>
+            </Setter.Value>
+      </Setter>
+     <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+          <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+            </Trigger>
+         <Trigger Property="IsFocused" Value="True">
+      <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}"/>
+       </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <!-- Modern ListBox Style -->
     <Style x:Key="ModernListBox" TargetType="ListBox">
     <Setter Property="Background" Value="{DynamicResource SurfaceBrush}"/>
