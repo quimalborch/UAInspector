@@ -146,9 +146,22 @@ BorderBrush="{TemplateBinding BorderBrush}"
 
     <!-- Body Text Style -->
     <Style x:Key="BodyText" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+  <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+
+    <!-- Hyperlink Style -->
+    <Style TargetType="Hyperlink">
+  <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+        <Setter Property="TextDecorations" Value="None"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Style.Triggers>
+   <Trigger Property="IsMouseOver" Value="True">
+             <Setter Property="TextDecorations" Value="Underline"/>
+ <Setter Property="Foreground" Value="{DynamicResource AccentBrush}"/>
+  </Trigger>
+</Style.Triggers>
     </Style>
 
 </ResourceDictionary>

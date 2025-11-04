@@ -144,19 +144,7 @@
     <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,4,0">
       <Hyperlink NavigateUri="https://quimalborch.com" 
     RequestNavigate="Hyperlink_RequestNavigate"
-    ToolTip="Visit Quim Alborch Profile"
-    Foreground="{DynamicResource TextSecondaryBrush}"
-      TextDecorations="None">
- <Hyperlink.Style>
-      <Style TargetType="Hyperlink">
- <Setter Property="TextDecorations" Value="None"/>
-        <Style.Triggers>
-   <Trigger Property="IsMouseOver" Value="True">
-        <Setter Property="TextDecorations" Value="Underline"/>
- </Trigger>
- </Style.Triggers>
-     </Style>
-  </Hyperlink.Style>
+    ToolTip="Visit Quim Alborch Profile">
  Quim Alborch
    </Hyperlink>
     </TextBlock>
@@ -164,26 +152,14 @@
     <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11">
    <Hyperlink NavigateUri="https://github.com/quimalborch/UAInspector/blob/master/LICENSE.txt" 
      RequestNavigate="Hyperlink_RequestNavigate"
-  ToolTip="MIT License Information"
-       Foreground="{DynamicResource TextSecondaryBrush}"
-    TextDecorations="None">
-   <Hyperlink.Style>
-      <Style TargetType="Hyperlink">
-      <Setter Property="TextDecorations" Value="None"/>
-    <Style.Triggers>
- <Trigger Property="IsMouseOver" Value="True">
-    <Setter Property="TextDecorations" Value="Underline"/>
-     </Trigger>
-        </Style.Triggers>
-  </Style>
-  </Hyperlink.Style>
+  ToolTip="MIT License Information">
   MIT
-  </Hyperlink>
+</Hyperlink>
     </TextBlock>
     <TextBlock Text="{Binding AppVersion, StringFormat=' - {0}'}" 
-      Foreground="{DynamicResource TextSecondaryBrush}"
-     FontSize="11"
-      ToolTip="Application Version"/>
+    Foreground="{DynamicResource TextSecondaryBrush}"
+   FontSize="11"
+   ToolTip="Application Version"/>
 </StackPanel>
    </Grid>
  </Border>
