@@ -300,70 +300,72 @@ try
     try
       {
         // Parse value based on data type
-        object valueToWrite = ParseValue(WriteValue, SelectedTag.DataType);
+ object valueToWrite = ParseValue(WriteValue, SelectedTag.DataType);
 
-           var success = await _opcClientService.WriteValueAsync(SelectedTag.NodeId, valueToWrite);
+   var writeResult = await _opcClientService.WriteValueAsync(SelectedTag.NodeId, valueToWrite);
    
-  if (success)
-    {
- System.Windows.MessageBox.Show(
-    $"Successfully wrote value '{WriteValue}' to {SelectedTag.DisplayName}",
-  "Write Success",
-    System.Windows.MessageBoxButton.OK,
-       System.Windows.MessageBoxImage.Information);
-
- // Value will be updated automatically by subscription within 300ms
-        }
-        else
+  if (!writeResult.Success)
 {
    System.Windows.MessageBox.Show(
-  $"Failed to write value to {SelectedTag.DisplayName}",
-         "Write Failed",
+  $"Failed to write value to {SelectedTag.DisplayName}:\n\n{writeResult.ErrorMessage}",
+      "Write Failed",
        System.Windows.MessageBoxButton.OK,
        System.Windows.MessageBoxImage.Warning);
  }
     }
     catch (Exception ex)
   {
-           System.Diagnostics.Debug.WriteLine($"Error writing value: {ex.Message}");
-       System.Windows.MessageBox.Show(
-           $"Failed to write value: {ex.Message}",
+     System.Diagnostics.Debug.WriteLine($"Error writing value: {ex.Message}");
+    System.Windows.MessageBox.Show(
+  $"Failed to write value: {ex.Message}",
       "Write Error",
-          System.Windows.MessageBoxButton.OK,
+     System.Windows.MessageBoxButton.OK,
      System.Windows.MessageBoxImage.Error);
-       }
+    }
         }
 
         private object ParseValue(string value, string dataType)
         {
-     if (string.IsNullOrWhiteSpace(dataType))
+     if (string.IsNullOrWhiteSpace(dataType) || string.IsNullOrWhiteSpace(value))
     return value;
 
-         try
+       try
  {
-        if (dataType.Contains("Boolean", StringComparison.OrdinalIgnoreCase))
+     // Normalize dataType to lowercase for comparison
+            var normalizedType = dataType.ToLowerInvariant();
+
+        if (normalizedType.Contains("boolean"))
     return bool.Parse(value);
-  else if (dataType.Contains("Int32", StringComparison.OrdinalIgnoreCase))
-        return int.Parse(value);
- else if (dataType.Contains("Int16", StringComparison.OrdinalIgnoreCase))
-      return short.Parse(value);
-  else if (dataType.Contains("Int64", StringComparison.OrdinalIgnoreCase))
-    return long.Parse(value);
-   else if (dataType.Contains("Float", StringComparison.OrdinalIgnoreCase))
-     return float.Parse(value);
-         else if (dataType.Contains("Double", StringComparison.OrdinalIgnoreCase))
-         return double.Parse(value);
-        else if (dataType.Contains("UInt32", StringComparison.OrdinalIgnoreCase))
-        return uint.Parse(value);
-    else if (dataType.Contains("UInt16", StringComparison.OrdinalIgnoreCase))
-   return ushort.Parse(value);
-   else if (dataType.Contains("Byte", StringComparison.OrdinalIgnoreCase))
+  else if (normalizedType.Contains("sbyte"))
+        return sbyte.Parse(value);
+  else if (normalizedType.Contains("byte") && !normalizedType.Contains("uint"))
      return byte.Parse(value);
-       else
-          return value;
+  else if (normalizedType.Contains("int16"))
+      return short.Parse(value);
+  else if (normalizedType.Contains("uint16"))
+   return ushort.Parse(value);
+  else if (normalizedType.Contains("int32") || (normalizedType.Contains("int") && !normalizedType.Contains("uint") && !normalizedType.Contains("64")))
+    return int.Parse(value);
+   else if (normalizedType.Contains("uint32") || (normalizedType.Contains("uint") && !normalizedType.Contains("64")))
+     return uint.Parse(value);
+   else if (normalizedType.Contains("int64"))
+    return long.Parse(value);
+   else if (normalizedType.Contains("uint64"))
+     return ulong.Parse(value);
+   else if (normalizedType.Contains("float"))
+     return float.Parse(value);
+       else if (normalizedType.Contains("double"))
+ return double.Parse(value);
+        else if (normalizedType.Contains("datetime"))
+        return DateTime.Parse(value);
+    else if (normalizedType.Contains("guid"))
+   return Guid.Parse(value);
+   else
+       return value;
  }
- catch
+ catch (Exception ex)
          {
+System.Diagnostics.Debug.WriteLine($"Error parsing value '{value}' as type '{dataType}': {ex.Message}");
    return value;
      }
         }
