@@ -1,5 +1,5 @@
 ﻿<Window x:Class="UAInspector.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -139,13 +139,52 @@
  FontSize="12"/>
       </StackPanel>
 
-   <!-- App Version -->
-<TextBlock Grid.Column="2" 
-    Text="{Binding AppVersion}"
-         Foreground="{DynamicResource TextSecondaryBrush}"
-                FontSize="11" 
-          VerticalAlignment="Center"
-          ToolTip="Application Version"/>
+   <!-- App Version and Author Info -->
+<StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+    <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11" Margin="0,0,4,0">
+      <Hyperlink NavigateUri="https://quimalborch.com" 
+    RequestNavigate="Hyperlink_RequestNavigate"
+    ToolTip="Visit Quim Alborch Profile"
+    Foreground="{DynamicResource TextSecondaryBrush}"
+      TextDecorations="None">
+ <Hyperlink.Style>
+      <Style TargetType="Hyperlink">
+ <Setter Property="TextDecorations" Value="None"/>
+        <Style.Triggers>
+   <Trigger Property="IsMouseOver" Value="True">
+        <Setter Property="TextDecorations" Value="Underline"/>
+ </Trigger>
+ </Style.Triggers>
+     </Style>
+  </Hyperlink.Style>
+ Quim Alborch
+   </Hyperlink>
+    </TextBlock>
+    <TextBlock Text=", " Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11"/>
+    <TextBlock Foreground="{DynamicResource TextSecondaryBrush}" FontSize="11">
+   <Hyperlink NavigateUri="https://github.com/quimalborch/UAInspector/blob/master/LICENSE.txt" 
+     RequestNavigate="Hyperlink_RequestNavigate"
+  ToolTip="MIT License Information"
+       Foreground="{DynamicResource TextSecondaryBrush}"
+    TextDecorations="None">
+   <Hyperlink.Style>
+      <Style TargetType="Hyperlink">
+      <Setter Property="TextDecorations" Value="None"/>
+    <Style.Triggers>
+ <Trigger Property="IsMouseOver" Value="True">
+    <Setter Property="TextDecorations" Value="Underline"/>
+     </Trigger>
+        </Style.Triggers>
+  </Style>
+  </Hyperlink.Style>
+  MIT
+  </Hyperlink>
+    </TextBlock>
+    <TextBlock Text="{Binding AppVersion, StringFormat=' - {0}'}" 
+      Foreground="{DynamicResource TextSecondaryBrush}"
+     FontSize="11"
+      ToolTip="Application Version"/>
+</StackPanel>
    </Grid>
  </Border>
     </Grid>
